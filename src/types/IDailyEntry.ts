@@ -4,7 +4,7 @@ export interface IDailyEntry {
     creationDate: Date;
     modificationDate: Date;
     mood: MoodEnum;
-    totalWords: number;
+    wordCount: number;
     title: string;
     description: string;
 }

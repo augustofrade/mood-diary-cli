@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
+    "dayjs": "^1.11.10",
     "inquirer": "^8.0.0",
     "jsonschema": "^1.4.1"
   }

@@ -1,7 +1,7 @@
 export enum MoodEnum {
-    HORRIBLE,
-    BAD,
-    NEUTRAL,
-    ALRIGHT,
-    GOOD
+    Horrible,
+    Bad,
+    Neutral,
+    Alright,
+    Good
 }

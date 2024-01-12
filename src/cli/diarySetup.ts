@@ -4,6 +4,7 @@ import inquirer from 'inquirer';
 import { basePath, configPath } from '../util/directories';
 import { IConfig } from '../types/IConfig';
 import { JsonFS } from '../util/JsonFS';
+import { filterInput, validateInput } from '../util/inputValidations';
 
 export function diarySetup() {
     console.log(chalk.yellow("No diary configuration file found, running diary setup..."));
@@ -28,7 +29,7 @@ export function diarySetup() {
             validate: validateInput
         },
         {
-            // TODO: test for [type: "editor"] during entry writing
+            // TODO: remove
             name: "textEditor",
             message: "Preferred text editor executable command:",
             default: "nano %file%",
@@ -42,31 +43,17 @@ export function diarySetup() {
             choices: ["JSON", "SQL"]
         }
     ])
-    .then((res: IConfig) => {
+    .then((answers: IConfig) => {
         try {
             fs.mkdirSync(basePath, { recursive: true });
             const jsonfs = new JsonFS();
-            res.creationDate = new Date();
-            res.lastAccess = new Date();
-            // res.diaryName = res.diaryName.length == 0
-            jsonfs.write(configPath, res)
+            answers.creationDate = new Date();
+            answers.lastAccess = new Date();
+            jsonfs.write(configPath, answers)
             console.log(chalk.green("\nDiary created and configured successfully!"));        
         } catch (e) {
             console.log(chalk.bgRed("\nError while trying to create your diary.\n"));
             console.log(e);
         }
     });
-}
-
-function filterInput(input: string) {
-    return input.trim();
-}
-
-function validateInput(input: string) {
-    if(input == "") {
-        console.log(chalk.red("\nRequired field!"));
-        return false;
-    } else {
-        return true;
-    }
 }
