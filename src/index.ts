@@ -13,7 +13,7 @@ if(!cm.hasConfigFile()) {
 } else {
     initCLI()
     .then(() => {
-        mainMenu()
+        mainMenu();
     })
     .catch(() => {
         console.log(chalk.red("Failed to fetch configuration data and set storage method"))

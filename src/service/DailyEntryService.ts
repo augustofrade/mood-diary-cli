@@ -1,4 +1,5 @@
 import { IDailyEntry } from '../types/IDailyEntry';
+import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
 
 export class DailyEntryService implements IRepository {
@@ -25,11 +26,11 @@ export class DailyEntryService implements IRepository {
         return null as any;
     };
 
-    public listEntries (): IDailyEntry[] {
-        return null as any;
+    public listEntries (): Array<IEntryListItem> {
+        return this.repository.listEntries();
     };
 
-    public exportEntires (): boolean {
+    public exportEntries (): boolean {
         return null as any;
     };
 

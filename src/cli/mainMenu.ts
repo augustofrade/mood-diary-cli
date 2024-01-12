@@ -2,13 +2,15 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 
 import { ConfigManager } from '../util/ConfigManager';
+import { listEntries } from './listEntries';
 import { newEntry } from './newEntry';
 
 const choices = {
     "new": newEntry,
-    "list": () => { throw new Error },
+    "list": listEntries,
     "details": () => { throw new Error },
-    "settings": () => { throw new Error }
+    "settings": () => { throw new Error },
+    "exit": process.exit
 }
     
 
@@ -26,6 +28,7 @@ export function mainMenu() {
             type: "list",
             name: "choice",
             message: "Choose one:",
+            pageSize: 20,
             choices: [
                 new inquirer.Separator("Entries:"),
                 {
@@ -45,6 +48,11 @@ export function mainMenu() {
                 {
                     name: "Settings",
                     value: "settings",
+                },
+                new inquirer.Separator(),
+                {
+                    name: "Exit",
+                    value: "exit"
                 }
             ]
         }

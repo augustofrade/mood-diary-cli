@@ -2,8 +2,10 @@ import fs from 'fs';
 import path from 'path';
 
 import { IDailyEntry } from '../types/IDailyEntry';
+import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
 import { jsonPath } from '../util/directories';
+import { JsonEntryHandler } from '../util/JsonEntryHandler';
 import { JsonFS } from '../util/JsonFS';
 
 export class JsonRepository implements IRepository {
@@ -18,6 +20,8 @@ export class JsonRepository implements IRepository {
         try {
             const entryPath = path.join(jsonPath, `${entry.dateID}.json`);
             this.jsonfs.writeSync(entryPath, entry);
+            const jsonHandler = new JsonEntryHandler();
+            jsonHandler.set(entry);
             return true;
         } catch (e) {
             console.log(e);
@@ -37,11 +41,12 @@ export class JsonRepository implements IRepository {
         return null as any;
     };
 
-    public listEntries (): IDailyEntry[] {
-        return null as any;
+    public listEntries (): Array<IEntryListItem> {
+        const jsonHandler = new JsonEntryHandler();
+        return jsonHandler.list();
     };
 
-    public exportEntires (): boolean {
+    public exportEntries (): boolean {
         return null as any;
     };
 
