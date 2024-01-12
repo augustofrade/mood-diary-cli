@@ -8,7 +8,6 @@ export function initCLI() {
         const repository = cm.readConfigs().getRepository();
     
         if(repository) {
-            console.log(repository)
             addRepositories(repository);
             resolve(null);
         } else {

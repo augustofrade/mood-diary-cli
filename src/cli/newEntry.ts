@@ -4,12 +4,15 @@ import inquirer from 'inquirer';
 
 import { DailyEntryService } from '../service/DailyEntryService';
 import { MoodEnum } from '../types/enum';
+import { IConfirmation } from '../types/IConfirmation';
 import { IDailyEntry } from '../types/IDailyEntry';
 import { filterInput, validateInput } from '../util/inputValidations';
+import { mainMenu } from './mainMenu';
+
 
 export function newEntry() {
     const todayDateID = dayjs().format("YYYY-MM-DD");
-    console.log(chalk.yellow("Press enter or leave blank for today's date or\nchose another one by typing it on yyyy-mm-dd format."));
+    console.log(chalk.yellow("Press enter or leave blank for today's date or\nchoose another one by typing it on yyyy-mm-dd format."));
 
     inquirer
     .prompt([
@@ -32,39 +35,90 @@ export function newEntry() {
     ])
     .then((answer: { dateToAdd: string }) => {
         const dateToAdd = dayjs(answer.dateToAdd).format("YYYY-MM-DD");
-        entryMenu(dateToAdd, todayDateID == dateToAdd);
+        entryCreationMenu(dateToAdd, todayDateID == dateToAdd);
     })
 }
 
 
-function entryMenu(dateID: string, isToday: boolean) {
+function entryCreationMenu(dateID: string, isToday: boolean, previousInput?: Partial<IDailyEntry>) {
     console.clear();
     console.log(chalk.gray("Creating entry for %s"), chalk.green(isToday ? "today" : dateID))
+    if(previousInput == undefined) {
+        previousInput = {};
+        previousInput.title = dateID;
+    }
 
     inquirer
     .prompt([
        {
         name: "title",
         message: "Title:",
-        default: dateID,
         filter: filterInput,
         validate: validateInput,
+        default: previousInput.title
        },
        {
         type: "list",
         name: "mood",
         message: "Mood:",
-        choices: Object.values(MoodEnum).filter(x => typeof x !== "number")
+        choices: Object.values(MoodEnum).filter(x => typeof x !== "number"),
+        default: previousInput.mood
        },
        {
         type: "editor",
         name: "description",
         message: "Description:",
-        filter: filterInput
+        filter: filterInput,
+        default: previousInput.description
+       },
+       {
+        type: "list",
+        name: "confirmation",
+        message: "Confirm:",
+        choices: [
+            {
+                name:"Yes, save",
+                value: "yes"
+            },
+            {
+
+                name: "No, review",
+                value: "no"
+            },
+            new inquirer.Separator(),
+            {
+                name: "Cancel and exit",
+                value: "exit"
+            }
+        ]
        }
     ])
-    .then((answers: IDailyEntry) => {
-        const entryService = DailyEntryService.instance();
-        entryService.addEntry(answers);
+    .then((answers: IDailyEntry & IConfirmation) => {
+        console.log(answers.confirmation)
+        if(answers.confirmation == "yes") {
+            answers.dateID = dateID;
+            (answers as any).confirmation = undefined;
+            saveEntry(answers);
+        } else if(answers.confirmation == "exit") {
+            mainMenu();
+        } else {
+            entryCreationMenu(dateID, isToday, answers);
+        }
     });
+}
+
+
+function saveEntry(answers: IDailyEntry) {
+    console.log(chalk.gray("\nSaving..."));
+    const entryService = DailyEntryService.instance();
+    const success = entryService.addEntry(answers);
+    if(success) {
+        console.log(chalk.green("Entry created successfully!"));
+        console.log(chalk.gray("Returning to the main menu..."));
+        setTimeout(mainMenu, 1000);
+
+    } else {
+        console.log(chalk.red("Failed to create entry"))
+        // TODO: create tmp file -> diary/tmp to save save written content
+    }
 }
