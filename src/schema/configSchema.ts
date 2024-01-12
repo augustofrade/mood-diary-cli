@@ -16,6 +16,13 @@ export const configSchema = {
         },
         "editorExecutable": {
             "type": "string"
+        },
+        "storage": {
+            "type": "string"
         }
-    }
+    },
+    "required": [
+        "creationDate", "diaryName", "author,",
+        "lastAccess", "editorExecutable", "storage"
+    ]
 }

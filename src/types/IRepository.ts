@@ -5,5 +5,6 @@ export interface IRepository {
     editEntry: (entry: IDailyEntry) => boolean;
     deleteEntry: (dateID: string) => boolean;
     readEntry: (dateID: string) => IDailyEntry;
-    listEntrys: () => Array<IDailyEntry>;
+    listEntries: () => Array<IDailyEntry>;
+    exportEntires: () => boolean;
 }

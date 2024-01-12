@@ -4,4 +4,5 @@ export interface IConfig {
     diaryName: string;
     author: string;
     editorExecutable: string;
+    storage: "JSON" | "SQL";
 }
