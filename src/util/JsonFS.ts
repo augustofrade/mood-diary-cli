@@ -15,7 +15,19 @@ export class JsonFS {
         }
     }
 
-    public write(filepath: string, content: object) {
+    public writeSync(filepath: string, content: object) {
         fs.writeFileSync(filepath, JSON.stringify(content, null, 2), "utf8");
+    }
+
+    public write(filepath: string, content: object) {
+        return new Promise((resolve, reject) => {
+            fs.writeFile(filepath, JSON.stringify(content, null, 2), "utf8", (err) => {
+                if(err) {
+                    reject();
+                } else {
+                    resolve(null);
+                }
+            });
+        })
     }
 }

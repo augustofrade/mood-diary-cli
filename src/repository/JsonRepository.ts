@@ -1,9 +1,10 @@
-import { IDailyEntry } from "../types/IDailyEntry";
-import { IRepository } from "../types/IRepository";
-import { JsonFS } from "../util/JsonFS";
-import fs from "fs";
-import { jsonPath } from "../util/directories";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
+
+import { IDailyEntry } from '../types/IDailyEntry';
+import { IRepository } from '../types/IRepository';
+import { jsonPath } from '../util/directories';
+import { JsonFS } from '../util/JsonFS';
 
 export class JsonRepository implements IRepository {
     private static _instance: JsonRepository;
@@ -16,7 +17,7 @@ export class JsonRepository implements IRepository {
     public addEntry (entry: IDailyEntry): boolean {
         try {
             const entryPath = path.join(jsonPath, `${entry.dateID}.json`);
-            this.jsonfs.write(entryPath, entry);
+            this.jsonfs.writeSync(entryPath, entry);
             return true;
         } catch (e) {
             console.log(e);

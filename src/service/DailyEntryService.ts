@@ -1,5 +1,5 @@
-import { IDailyEntry } from "../types/IDailyEntry";
-import { IRepository } from "../types/IRepository";
+import { IDailyEntry } from '../types/IDailyEntry';
+import { IRepository } from '../types/IRepository';
 
 export class DailyEntryService implements IRepository {
     private static _instance: DailyEntryService;
@@ -10,9 +10,9 @@ export class DailyEntryService implements IRepository {
         entry.wordCount = entry.description.split(" ").length;
         entry.creationDate = new Date();
         entry.modificationDate = entry.creationDate;
-        return null as any;
+        return this.repository.addEntry(entry);
     };
-
+    
     public editEntry (entry: IDailyEntry): boolean {
         return null as any;
     };
