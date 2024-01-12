@@ -1,0 +1,26 @@
+{
+  "name": "mood-diary-cli",
+  "version": "1.0.0",
+  "description": "CLI Diary for mood & activities tracking",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --watch src ./src/index.ts",
+    "create": "npm install && npx tsc && npm i -g"
+  },
+  "bin": {
+    "mydiary": "./build/index.js"
+  },
+  "author": "Augusto",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.0.0",
+    "jsonschema": "^1.4.1"
+  }
+}
