@@ -10,20 +10,22 @@ import { printHeaderLine } from '../util/printHeaderLine';
 import { entrySetup } from './entrySetup';
 import { listEntries } from './listEntries';
 import { mainMenu } from './mainMenu';
+import { ConfigManager } from '../util/ConfigManager';
 
 export function viewEntry(dateID: string) {
     const entry = DailyEntryService.instance().readEntry(dateID);
     if(!entry)
         return mainMenu();
 
+    const { dateFormat } = ConfigManager.instance().configs!;
     const moodIndex = MoodEnum[entry.mood] as unknown as number;
     const moodColor = moodColors[moodIndex];
-    const creationDate = dayjs(entry.creationDate).format("hh:mm, YYYY/MM/DD");
-    const modificationDate = dayjs(entry.modificationDate).format("hh:mm, YYYY/MM/DD");
+    const creationDate = dayjs(entry.creationDate).format(`hh:mm, ${dateFormat}`);
+    const modificationDate = dayjs(entry.modificationDate).format(`hh:mm, ${dateFormat}`);
     
     console.clear();
     console.log("-".repeat(process.stdout.columns));
-    console.log(chalk.bold(chalk.gray(dateID.replace(/-/g, "/"))));
+    console.log(chalk.bold(chalk.gray(dayjs(dateID).format(dateFormat))));
     console.log("-".repeat(process.stdout.columns));
     printHeaderLine("Title", chalk.bold(chalk.green(entry.title)));
     printHeaderLine("Mood", moodColor(entry.mood));

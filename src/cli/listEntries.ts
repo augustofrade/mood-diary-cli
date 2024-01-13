@@ -8,6 +8,7 @@ import { IEntryListItem } from '../types/IEntryListItem';
 import { moodColors } from '../util/moodColors';
 import { mainMenu } from './mainMenu';
 import { viewEntry } from './viewEntry';
+import { ConfigManager } from '../util/ConfigManager';
 
 export function listEntries() {
     showPrompt(true, true, true);
@@ -80,12 +81,15 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
                 new inquirer.Separator("\nNothing here... :p\nStart by writing a new entry!")
             ];
         } else {
+            const { dateFormat } = ConfigManager.instance().configs!;
             return entries
             .sort((a, b) => Date.parse(a.dateID) - Date.parse(b.dateID))
             .reverse()
             .map(e => {
                 const title = [];
-                if(visibleDates) title.push(`${dayjs(e.dateID).format("YYYY-MM-DD")}`);
+                if(visibleDates) {
+                    title.push(`${dayjs(e.dateID).format(dateFormat)}`);
+                }
                 if(visibleMoods) {
                     const color = moodColors[e.mood];
                     title.push(`${color(MoodEnum[e.mood])}`);

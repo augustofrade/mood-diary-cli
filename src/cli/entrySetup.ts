@@ -76,7 +76,7 @@ function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean,
        {
         type: "list",
         name: "mood",
-        message: "Mood:",
+        message: isToday ? "How are you feeling today?" : "How were you feeling that day?",
         choices: Object.values(MoodEnum).filter(x => typeof x !== "number"),
         default: previousInput.mood
        },

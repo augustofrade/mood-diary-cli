@@ -6,5 +6,6 @@ export interface IConfig {
     diaryName: string;
     author: string;
     storage: "JSON" | "SQL";
-    dateFormat: DateFormatsEnum
+    dateFormat: string;
+    showQuotes: boolean;
 }

@@ -10,12 +10,12 @@ import { randomArrayItem } from '../util/randomArrayItem';
 import { mainMenu } from './mainMenu';
 
 export function diaryDetails() {
-    const { author, diaryName } = ConfigManager.instance().configs!;
+    const { author, diaryName, dateFormat } = ConfigManager.instance().configs!;
     const { wordCount, mood } = DailyEntryService.instance().entriesAverageDetails();
     const countAdjetive = randomArrayItem(["Amazing", "Incredible", "Marvellous", "Impressive"]);
 
     console.clear();
-    console.log(chalk.green(`\nHello, ${author}! Today is ${dayjs().format("YYYY-MM-DD")}. Here are some details about your "${diaryName}":\n`));
+    console.log(chalk.green(`\nHello, ${author}! Today is ${dayjs().format(dateFormat)}. Here are some details about your "${diaryName}":\n`));
     console.log(chalk.gray("-".repeat(process.stdout.columns)));
 
     printHeaderLine("\nAverage Mood", MoodEnum[mood.average.toFixed(0) as unknown as number]);

@@ -23,6 +23,9 @@ export class ConfigManager {
     public readConfigs(): this {
         const jsonfs = new JsonFS();
         this._configs = jsonfs.read<IConfig>(configPath)!;
+        // fallback if the user deletes it somehow
+        if(this._configs.dateFormat == undefined)
+            this._configs.dateFormat = "YYYY-MM-DD";
         return this;
     }
 
