@@ -54,20 +54,18 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
         }
     ])
     .then((answer: { choice: string }) => {
+        defaultChoice = answer.choice;
         switch(answer.choice) {
             case "back":
                 mainMenu();
                 break;
             case "toggle-dates":
-                defaultChoice = "toggle-dates";
                 showPrompt(!visibleDates, visibleTitles, visibleMoods);
                 break;
             case "toggle-titles":
-                defaultChoice = "toggle-titles";
                 showPrompt(visibleDates, !visibleTitles, visibleMoods);
                 break;
             case "toggle-moods":
-                defaultChoice = "toggle-moods";
                 showPrompt(visibleDates, visibleTitles, !visibleMoods);
                 break;
             default:
@@ -78,7 +76,9 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
 
     function generateList(entries: Array<IEntryListItem>) {
         if(entries.length == 0) {
-            return [new inquirer.Separator("\nNothing here... :p\nStart by writing a new entry!")];
+            return [
+                new inquirer.Separator("\nNothing here... :p\nStart by writing a new entry!")
+            ];
         } else {
             return entries
             .sort((a, b) => Date.parse(a.dateID) - Date.parse(b.dateID))

@@ -13,3 +13,4 @@ A CLI mood diary aimed to provide a user-friendly interface for journaling one's
 - [X] Open daily record description with text editor
 - [ ] Schema validation (if neccessary)
 - [ ] Export all entries to a single JSON file
+- [ ] Encryption with PGP

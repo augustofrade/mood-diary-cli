@@ -1,3 +1,4 @@
+import { IAverageDetails } from './IAverageDetails';
 import { IDailyEntry } from './IDailyEntry';
 import { IEntryListItem } from './IEntryListItem';
 
@@ -9,4 +10,5 @@ export interface IRepository {
     listEntries: () => Array<IEntryListItem>;
     entryExists: (dateID: string) => boolean;
     exportEntries: () => boolean;
+    entriesAverageDetails: () => IAverageDetails;
 }

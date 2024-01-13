@@ -14,15 +14,12 @@ export const configSchema = {
         "lastAccess": {
             "type": "string"
         },
-        "editorExecutable": {
-            "type": "string"
-        },
         "storage": {
             "type": "string"
         }
     },
     "required": [
         "creationDate", "diaryName", "author,",
-        "lastAccess", "editorExecutable", "storage"
+        "lastAccess", "storage"
     ]
 }

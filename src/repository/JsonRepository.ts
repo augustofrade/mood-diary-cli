@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
+import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
@@ -63,6 +64,11 @@ export class JsonRepository implements IRepository {
 
     public entryExists (dateID: string): boolean {
         return fs.existsSync(path.join(jsonPath, `${dateID}.json`));
+    };
+    
+    public entriesAverageDetails (): IAverageDetails {
+        const jsonHandler = new JsonEntryHandler();
+        return jsonHandler.entriesAverageDetails();
     };
 
     public static instance() {

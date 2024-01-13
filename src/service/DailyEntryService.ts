@@ -1,3 +1,4 @@
+import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
@@ -38,6 +39,10 @@ export class DailyEntryService implements IRepository {
 
     public entryExists (dateID: string): boolean {
         return this.repository.entryExists(dateID);
+    };
+    
+    public entriesAverageDetails (): IAverageDetails {
+        return this.repository.entriesAverageDetails();
     };
 
     public static instance() {

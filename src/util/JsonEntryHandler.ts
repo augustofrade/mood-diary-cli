@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { MoodEnum } from '../types/enum';
+import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IJsonList } from '../types/IJsonList';
@@ -57,6 +58,39 @@ export class JsonEntryHandler {
             }
         });
         return list;
+    }
+
+    public entriesAverageDetails(): IAverageDetails {
+        const entries = this.list();
+        let wordCount = 0;
+        let moodSum = 0;
+        // amount
+        let maxCount = 0;
+        // mood ID
+        let maxMood = 0;
+        // mood map
+        const moodCount: Record<number, number> = {};
+
+        entries.map(e => {
+            wordCount += e.wordCount;
+            moodSum += e.mood;
+            // count every mood occurrence
+            if(moodCount[e.mood] == undefined)
+                moodCount[e.mood] = 0;
+            moodCount[e.mood]++;
+            // set most frequent mood
+            if(moodCount[e.mood] > maxCount) {
+                maxCount = moodCount[e.mood];
+                maxMood = e.mood;
+            }
+        })
+        return {
+            mood: {
+                average: moodSum / entries.length,
+                mostCommon: entries.length && moodCount[maxMood] > 1 ? maxMood : null
+            },
+            wordCount
+        }
     }
 
     // TODO: create method to read again each JSON entry

@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import fs from 'fs';
 import inquirer from 'inquirer';
 
+import { DateFormatsEnum } from '../types/enum';
 import { IConfig } from '../types/IConfig';
 import { ConfigManager } from '../util/ConfigManager';
 import { basePath, configPath } from '../util/directories';
@@ -13,8 +14,7 @@ import { mainMenu } from './mainMenu';
 export function diarySetup() {
     console.log(chalk.yellow("No diary configuration file found, running diary setup..."));
     console.log(chalk.gray("Let's setup your new CLI Mood Diary!"));
-    console.log(chalk.gray("I only need optional presentation informations and\nyour preferred text editor for writing your diary entries."));
-    console.log(chalk.gray("For the text editor executable, type its command followed by"), chalk.green("%file%\n"));
+    console.log(chalk.gray("I only need a few optional presentation informations."));
 
     inquirer
     .prompt([
@@ -33,17 +33,9 @@ export function diarySetup() {
             validate: validateInput
         },
         {
-            // TODO: remove
-            name: "textEditor",
-            message: "Preferred text editor executable command:",
-            default: "nano %file%",
-            filter: filterInput,
-            validate: validateInput
-        },
-        {
             type: "list",
             name: "storage",
-            message: "Preferred",
+            message: "Preferred data storage",
             choices: ["JSON", "SQL"]
         }
     ])
@@ -53,6 +45,7 @@ export function diarySetup() {
             const jsonfs = new JsonFS();
             answers.creationDate = new Date();
             answers.lastAccess = new Date();
+            answers.dateFormat = DateFormatsEnum['YYYY/MM/DD'];
             jsonfs.writeSync(configPath, answers)
             console.log(chalk.green("\nDiary created and configured successfully!"));
             initialize();

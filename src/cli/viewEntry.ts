@@ -6,6 +6,7 @@ import { DailyEntryService } from '../service/DailyEntryService';
 import { MoodEnum } from '../types/enum';
 import { IConfirmation } from '../types/IConfirmation';
 import { moodColors } from '../util/moodColors';
+import { printHeaderLine } from '../util/printHeaderLine';
 import { entrySetup } from './entrySetup';
 import { listEntries } from './listEntries';
 import { mainMenu } from './mainMenu';
@@ -67,10 +68,6 @@ export function viewEntry(dateID: string) {
             deleteEntryPrompt(dateID);
         }
     });
-}
-
-function printHeaderLine(name: string, value: any) {
-    console.log(chalk.bold(`${name}:`), value);
 }
 
 function deleteEntryPrompt(dateID: string) {

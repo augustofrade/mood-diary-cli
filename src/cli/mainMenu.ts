@@ -2,13 +2,14 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 
 import { ConfigManager } from '../util/ConfigManager';
+import { diaryDetails } from './diaryInfo';
 import { entrySetup } from './entrySetup';
 import { listEntries } from './listEntries';
 
 const choices = {
     "new": entrySetup,
     "list": listEntries,
-    "details": () => { throw new Error },
+    "details": diaryDetails,
     "settings": () => { throw new Error },
     "exit": process.exit
 }
