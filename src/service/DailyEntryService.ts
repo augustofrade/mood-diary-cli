@@ -15,15 +15,17 @@ export class DailyEntryService implements IRepository {
     };
     
     public editEntry (entry: IDailyEntry): boolean {
-        return null as any;
+        entry.wordCount = entry.description.split(" ").length;
+        entry.modificationDate = entry.creationDate;
+        return this.repository.editEntry(entry);
     };
 
     public deleteEntry (dateID: string): boolean {
-        return null as any;
+        return this.repository.deleteEntry(dateID);
     };
 
-    public readEntry (dateID: string): IDailyEntry {
-        return null as any;
+    public readEntry (dateID: string): IDailyEntry | null {
+        return this.repository.readEntry(dateID);
     };
 
     public listEntries (): Array<IEntryListItem> {
@@ -32,6 +34,10 @@ export class DailyEntryService implements IRepository {
 
     public exportEntries (): boolean {
         return null as any;
+    };
+
+    public entryExists (dateID: string): boolean {
+        return this.repository.entryExists(dateID);
     };
 
     public static instance() {

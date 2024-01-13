@@ -10,8 +10,14 @@ import { filterInput, validateInput } from '../util/inputValidations';
 import { mainMenu } from './mainMenu';
 
 
-export function newEntry() {
+export function entrySetup(dateID?: string) {
     const todayDateID = dayjs().format("YYYY-MM-DD");
+    if(dateID) {
+        const entry = DailyEntryService.instance().readEntry(dateID);
+        if(entry)
+            return entryCreationMenu(dateID, todayDateID == dateID, true, entry);
+    }
+
     console.log(chalk.yellow("Press enter or leave blank for today's date or\nchoose another one by typing it on yyyy-mm-dd format."));
 
     inquirer
@@ -28,6 +34,16 @@ export function newEntry() {
                 if(!dayjs(answer).isValid()) {
                     console.log(chalk.red("\nType a valid date!"));
                     return false;
+                } else if(dayjs(answer).isAfter(todayDateID)) {
+                    console.log(chalk.red("\nYou cannot create a entry for a future date!"));
+                    return false;
+                } else {
+                    const entryExists = DailyEntryService.instance().entryExists(answer);
+                    
+                    if(entryExists) {
+                        console.log(chalk.red("\nAn entry for this date already exists!"));
+                        return false;
+                    }
                 }
                 return true;
             } 
@@ -35,14 +51,14 @@ export function newEntry() {
     ])
     .then((answer: { dateToAdd: string }) => {
         const dateToAdd = dayjs(answer.dateToAdd).format("YYYY-MM-DD");
-        entryCreationMenu(dateToAdd, todayDateID == dateToAdd);
+        entryCreationMenu(dateToAdd, todayDateID == dateToAdd, false);
     })
 }
 
 
-function entryCreationMenu(dateID: string, isToday: boolean, previousInput?: Partial<IDailyEntry>) {
+function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean, previousInput?: Partial<IDailyEntry>) {
     console.clear();
-    console.log(chalk.gray("Creating entry for %s"), chalk.green(isToday ? "today" : dateID))
+    console.log(chalk.gray(`${isEditing ? "Editing" : "Creating"} entry for ${chalk.green(isToday ? "today" : dateID)}`));
     if(previousInput == undefined) {
         previousInput = {};
         previousInput.title = dateID;
@@ -74,7 +90,7 @@ function entryCreationMenu(dateID: string, isToday: boolean, previousInput?: Par
        {
         type: "list",
         name: "confirmation",
-        message: "Confirm:",
+        message: "Save?",
         choices: [
             {
                 name:"Yes, save",
@@ -94,7 +110,6 @@ function entryCreationMenu(dateID: string, isToday: boolean, previousInput?: Par
        }
     ])
     .then((answers: IDailyEntry & IConfirmation) => {
-        console.log(answers.confirmation)
         if(answers.confirmation == "yes") {
             answers.dateID = dateID;
             (answers as any).confirmation = undefined;
@@ -102,7 +117,7 @@ function entryCreationMenu(dateID: string, isToday: boolean, previousInput?: Par
         } else if(answers.confirmation == "exit") {
             mainMenu();
         } else {
-            entryCreationMenu(dateID, isToday, answers);
+            entryCreationMenu(dateID, isToday, isEditing, answers);
         }
     });
 }
@@ -113,7 +128,7 @@ function saveEntry(answers: IDailyEntry) {
     const entryService = DailyEntryService.instance();
     const success = entryService.addEntry(answers);
     if(success) {
-        console.log(chalk.green("Entry created successfully!"));
+        console.log(chalk.green("Entry saved successfully!"));
         console.log(chalk.gray("Returning to the main menu..."));
         setTimeout(mainMenu, 1000);
 

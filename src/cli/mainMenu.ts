@@ -2,11 +2,11 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 
 import { ConfigManager } from '../util/ConfigManager';
+import { entrySetup } from './entrySetup';
 import { listEntries } from './listEntries';
-import { newEntry } from './newEntry';
 
 const choices = {
-    "new": newEntry,
+    "new": entrySetup,
     "list": listEntries,
     "details": () => { throw new Error },
     "settings": () => { throw new Error },

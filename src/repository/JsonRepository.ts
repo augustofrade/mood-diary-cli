@@ -30,15 +30,26 @@ export class JsonRepository implements IRepository {
     };
 
     public editEntry (entry: IDailyEntry): boolean {
-        return null as any;
+        return this.addEntry(entry);
     };
 
     public deleteEntry (dateID: string): boolean {
-        return null as any;
+        try {
+            const entryPath = path.join(jsonPath, `${dateID}.json`);
+            fs.rmSync(entryPath);
+            const jsonHandler = new JsonEntryHandler();
+            jsonHandler.remove(dateID);
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
     };
 
-    public readEntry (dateID: string): IDailyEntry {
-        return null as any;
+    public readEntry (dateID: string): IDailyEntry | null {
+        const filepath = path.join(jsonPath, `${dateID}.json`);
+        const entry = this.jsonfs.read<IDailyEntry>(filepath);
+        return entry;
     };
 
     public listEntries (): Array<IEntryListItem> {
@@ -48,6 +59,10 @@ export class JsonRepository implements IRepository {
 
     public exportEntries (): boolean {
         return null as any;
+    };
+
+    public entryExists (dateID: string): boolean {
+        return fs.existsSync(path.join(jsonPath, `${dateID}.json`));
     };
 
     public static instance() {

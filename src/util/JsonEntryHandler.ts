@@ -3,10 +3,10 @@ import path from 'path';
 
 import { MoodEnum } from '../types/enum';
 import { IDailyEntry } from '../types/IDailyEntry';
+import { IEntryListItem } from '../types/IEntryListItem';
 import { IJsonList } from '../types/IJsonList';
 import { basePath } from './directories';
 import { JsonFS } from './JsonFS';
-import { IEntryListItem } from '../types/IEntryListItem';
 
 /**
  * Class for CRUD operations regarding entry listing
@@ -58,4 +58,7 @@ export class JsonEntryHandler {
         });
         return list;
     }
+
+    // TODO: create method to read again each JSON entry
+    // and recreate json_entry_details.json
 }
