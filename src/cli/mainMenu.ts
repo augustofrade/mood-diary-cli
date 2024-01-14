@@ -24,7 +24,7 @@ export function mainMenu() {
     console.log(chalk.green(`\nHello, ${author}! Welcome to "${diaryName}"!`));
     console.log(chalk.green("What would you like to do today?"));
     if(showQuotes) {
-        const randomQuote = new QuoteManager().getQuotes().random();
+        const randomQuote = new QuoteManager().readQuotes().random();
         const label = randomQuote != undefined ? randomQuote : "Nothing here! Add quotes in the settings";
             console.log(chalk.gray("\n" + label));
     }

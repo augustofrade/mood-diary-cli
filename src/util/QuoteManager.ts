@@ -5,10 +5,11 @@ import { basePath } from './directories';
 import { randomArrayItem } from './randomArrayItem';
 
 export class QuoteManager {
-    public constructor() {}
     private readonly filepath: string = path.join(basePath, "headings.txt");
-    private quotes: string[] = [];
     private quotesLoaded = false;
+    public quotes: string[] = [];
+    
+    public constructor() {}
 
     public generateFile() {
         const quotes = [
@@ -19,7 +20,7 @@ export class QuoteManager {
         fs.writeFileSync(this.filepath, quotes.join("\n"), "utf8");
     }
 
-    public getQuotes(): this {
+    public readQuotes(): this {
         this.quotes = fs.readFileSync(this.filepath, "utf8").split("\n");
         this.quotesLoaded = true;
         return this;
@@ -27,13 +28,13 @@ export class QuoteManager {
 
     public byIndex(index = 0): string | undefined {
         if(!this.quotesLoaded)
-            this.getQuotes();
+            this.readQuotes();
         return this.quotes[index];
     }
 
     public random(): string | undefined {
         if(!this.quotesLoaded)
-            this.getQuotes();
+            this.readQuotes();
         return randomArrayItem(this.quotes);
     }
 }

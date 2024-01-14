@@ -7,13 +7,14 @@ import { IConfirmation } from '../types/IConfirmation';
 import { ConfigManager } from '../util/ConfigManager';
 import { filterInput, validateInput } from '../util/inputValidations';
 import { mainMenu } from './mainMenu';
+import { QuoteManager } from '../util/QuoteManager';
 
 interface IConfirmationHandlerOptions {
     confirmation: "yes" | "no" | "exit",
     onAccept: (configs: IConfig) => void,
     onReject: () => void,
     msgSucess: string,
-    msgError: string
+    msgError: string,
 }
 
 export function settingsMenu(headerWarning?: { msg: string, success: boolean }) {
@@ -35,6 +36,10 @@ export function settingsMenu(headerWarning?: { msg: string, success: boolean }) 
         "toggle-quotes": {
             label: `${configs.showQuotes ? "Hide" : "Show"} quotes on main menu`,
             callback: toggleQuotes
+        },
+        "reset-quotes": {
+            label: "Reset quote list",
+            callback: resetQuotesPrompt
         },
         "back": {
             label: "Back to main menu",
@@ -89,6 +94,40 @@ function toggleQuotes() {
     }
 }
 
+function resetQuotesPrompt() {
+    console.log(chalk.bold(chalk.red("This will delete every quote added by you and replace with the default ones")));
+
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "confirmation",
+            message: "Are you sure?",
+            choices: [
+                {
+                    name: "Yes",
+                    value: "yes"
+                },
+                {
+                    name: "No, cancel",
+                    value: "no"
+                }
+            ]
+        }
+    ])
+    .then(({ confirmation }: IConfirmation) => {
+        if(confirmation == "yes") {
+            try {
+                new QuoteManager().generateFile();
+                settingsMenu({ msg: "Quote list reset successfully", success: true });
+            } catch (e) {
+                settingsMenu({ msg: "Could not reset quote list", success: false });
+            }
+        } else {
+            settingsMenu();
+        }
+    })
+}
+
 function changeDateFormatPrompt(oldDateFormat: string) {
     const cm = ConfigManager.instance();
     const configs = cm.configs!;
@@ -117,7 +156,7 @@ function changeDateFormatPrompt(oldDateFormat: string) {
 }
 
 function changeNamePrompt(oldName: string) {
-    const { confirmationHandler, confirmationSelection } = confirmationPrompt();
+    const { confirmationHandler, confirmationSelection } = confirmationPrompt("Save?");
 
     inquirer.prompt([
         {
@@ -143,7 +182,7 @@ function changeNamePrompt(oldName: string) {
 
 
 function changeDiaryNamePrompt(oldDiaryName: string) {
-    const { confirmationHandler, confirmationSelection } = confirmationPrompt();
+    const { confirmationHandler, confirmationSelection } = confirmationPrompt("Save?");
 
     inquirer.prompt([
         {
@@ -161,7 +200,7 @@ function changeDiaryNamePrompt(oldDiaryName: string) {
             confirmation,
             onAccept: (configs: IConfig) => configs.diaryName = diaryName,
             onReject: () => changeDiaryNamePrompt(diaryName),
-            msgSucess: "Diry name changed successfully!",
+            msgSucess: "Diary name changed successfully!",
             msgError: "An error occurred while trying to change the diary name"
         })
     })
@@ -171,7 +210,7 @@ function changeDiaryNamePrompt(oldDiaryName: string) {
  * Helper class to padronize and reduce repetitive code 
  * when asking for user confirmation and saving the configs
  */
-function confirmationPrompt() {
+function confirmationPrompt(confrimationMessage: string) {
     const confirmationHandler = (options: IConfirmationHandlerOptions) => {
         if(options.confirmation == "yes") {
             const cm = ConfigManager.instance();
@@ -192,7 +231,7 @@ function confirmationPrompt() {
     const confirmationSelection = {
         type: "list",
         name: "confirmation",
-        message: "Save?",
+        message: confrimationMessage,
         choices: [
             {
                 name: "Yes, save",
