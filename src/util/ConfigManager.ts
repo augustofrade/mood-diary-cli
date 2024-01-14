@@ -30,6 +30,8 @@ export class ConfigManager {
     }
 
     public updateConfigs(configs: IConfig): void {
+        // TODO: update by this._configs object ref and not by parameter value
+        // as they are the same object and the parameter is irrelevant
         const jsonfs = new JsonFS();
         this._configs = configs;
         jsonfs.writeSync(configPath, configs);

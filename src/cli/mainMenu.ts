@@ -6,12 +6,13 @@ import { QuoteManager } from '../util/QuoteManager';
 import { diaryDetails } from './diaryInfo';
 import { entrySetup } from './entrySetup';
 import { listEntries } from './listEntries';
+import { settingsMenu } from './settingsMenu';
 
 const choices = {
     "new": entrySetup,
     "list": listEntries,
     "details": diaryDetails,
-    "settings": () => { throw new Error },
+    "settings": settingsMenu,
     "exit": process.exit
 }
     
