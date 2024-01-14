@@ -1,10 +1,12 @@
 import fs from 'fs';
 
-import { IConfig } from '../types/IConfig';
-import { configPath } from './directories';
-import { JsonFS } from './JsonFS';
-import { IRepository } from '../types/IRepository';
 import { JsonRepository } from '../repository/JsonRepository';
+import { DateFormatsEnum } from '../types/enum';
+import { IConfig } from '../types/IConfig';
+import { IRepository } from '../types/IRepository';
+import { SetupConfigs } from '../types/SetupConfigs';
+import { basePath, configPath } from './directories';
+import { JsonFS } from './JsonFS';
 
 export class ConfigManager {
     private static _instance: ConfigManager;
@@ -29,12 +31,14 @@ export class ConfigManager {
         return this;
     }
 
-    public updateConfigs(configs: IConfig): void {
-        // TODO: update by this._configs object ref and not by parameter value
-        // as they are the same object and the parameter is irrelevant
+    /**
+     * Configs are obtained by the getter "configs",
+     * since the object returned by it is the same as this._configs
+     * in this function, it just needs to be written in a file.
+     */
+    public updateConfigs(): void {
         const jsonfs = new JsonFS();
-        this._configs = configs;
-        jsonfs.writeSync(configPath, configs);
+        jsonfs.writeSync(configPath, this._configs!);
     }
 
     public getRepository(): IRepository | null {
@@ -45,6 +49,29 @@ export class ConfigManager {
             throw { error: "Not implemented" }
         else
             return null
+    }
+
+    /**
+     * Creates a new configurations json file with default values
+     * @param userConfig object with user-defined values
+     */
+    public generateFile(userConfig: SetupConfigs): void {
+        fs.mkdirSync(basePath, { recursive: true });
+        const jsonfs = new JsonFS();
+        const configs: IConfig = {
+            author: userConfig.author,
+            diaryName: userConfig.diaryName,
+            storage: userConfig.storage,
+            creationDate: new Date(),
+            lastAccess: new Date(),
+            dateFormat: DateFormatsEnum["YYYY/MM/DD"],
+            showQuotes: true,
+            categories: [
+                "Exercises", "Vacations", "Work", "Day Off",
+                "School", "Studying", "Health", "Family", "Friends"
+            ]
+        };
+        jsonfs.writeSync(configPath, configs);
     }
 
     public static instance(): ConfigManager {

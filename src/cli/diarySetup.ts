@@ -1,14 +1,10 @@
 import chalk from 'chalk';
-import fs from 'fs';
 import inquirer from 'inquirer';
 
-import { DateFormatsEnum } from '../types/enum';
-import { IConfig } from '../types/IConfig';
+import { SetupConfigs } from '../types/SetupConfigs';
 import { ConfigManager } from '../util/ConfigManager';
-import { basePath, configPath } from '../util/directories';
 import { initCLI } from '../util/initCLI';
 import { filterInput, validateInput } from '../util/inputValidations';
-import { JsonFS } from '../util/JsonFS';
 import { QuoteManager } from '../util/QuoteManager';
 import { mainMenu } from './mainMenu';
 
@@ -40,19 +36,11 @@ export function diarySetup() {
             choices: ["JSON", "SQL"]
         }
     ])
-    .then((answers: IConfig) => {
+    .then((answers: SetupConfigs) => {
         try {
-            fs.mkdirSync(basePath, { recursive: true });
-            const jsonfs = new JsonFS();
-            // dates
-            answers.creationDate = new Date();
-            answers.lastAccess = new Date();
-            // default values that can be changed after in the settings
-            answers.dateFormat = DateFormatsEnum['YYYY/MM/DD'];
-            answers.showQuotes = true;
-            // generate neccessary files
-            jsonfs.writeSync(configPath, answers)
+            ConfigManager.instance().generateFile(answers);
             new QuoteManager().generateFile();
+
             console.log(chalk.green("\nDiary created and configured successfully!"));
             initialize();
         } catch (e) {

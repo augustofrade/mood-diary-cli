@@ -1,5 +1,3 @@
-import { DateFormatsEnum } from "./enum";
-
 export interface IConfig {
     creationDate: Date;
     lastAccess: Date;
@@ -8,4 +6,5 @@ export interface IConfig {
     storage: "JSON" | "SQL";
     dateFormat: string;
     showQuotes: boolean;
+    categories: string[];
 }

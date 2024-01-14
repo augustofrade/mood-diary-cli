@@ -6,8 +6,8 @@ import { IConfig } from '../types/IConfig';
 import { IConfirmation } from '../types/IConfirmation';
 import { ConfigManager } from '../util/ConfigManager';
 import { filterInput, validateInput } from '../util/inputValidations';
-import { mainMenu } from './mainMenu';
 import { QuoteManager } from '../util/QuoteManager';
+import { mainMenu } from './mainMenu';
 
 interface IConfirmationHandlerOptions {
     confirmation: "yes" | "no" | "exit",
@@ -84,7 +84,7 @@ function toggleQuotes() {
         } else {
             configs["showQuotes"] = !configs["showQuotes"];
         }
-        cm.updateConfigs(configs);
+        cm.updateConfigs();
         settingsMenu({
             msg: `Quotes ${configs["showQuotes"] ? "now will be shown in the main menu" : "are now hidden"}`,
             success: true
@@ -147,7 +147,7 @@ function changeDateFormatPrompt(oldDateFormat: string) {
     .then(({ choice }: { choice: DateFormatsEnum }) => {
         try {
             configs["dateFormat"] = choice;
-            cm.updateConfigs(configs);
+            cm.updateConfigs();
             settingsMenu({ msg: "Date format altered successfully", success: true });
         } catch (e) {
             settingsMenu({ msg: "Date format altered successfully", success: true });
@@ -216,7 +216,7 @@ function confirmationPrompt(confrimationMessage: string) {
             const cm = ConfigManager.instance();
             options.onAccept(cm.configs!);
             try {
-                cm.updateConfigs(cm.configs!);
+                cm.updateConfigs();
                 settingsMenu({ msg: options.msgSucess, success: true });
             } catch (e) {
                 settingsMenu({ msg: options.msgError, success: false });
