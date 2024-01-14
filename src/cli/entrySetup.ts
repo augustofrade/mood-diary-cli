@@ -104,7 +104,7 @@ function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean,
             new inquirer.Separator(),
             {
                 name: "Cancel and exit",
-                value: "exit"
+                value: "cancel"
             }
         ]
        }
@@ -114,7 +114,7 @@ function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean,
             answers.dateID = dateID;
             (answers as any).confirmation = undefined;
             saveEntry(answers);
-        } else if(answers.confirmation == "exit") {
+        } else if(answers.confirmation == "cancel") {
             mainMenu();
         } else {
             entryCreationMenu(dateID, isToday, isEditing, answers);

@@ -1,50 +1,30 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 
-import { DateFormatsEnum } from '../types/enum';
-import { IConfig } from '../types/IConfig';
-import { IConfirmation } from '../types/IConfirmation';
 import { ConfigManager } from '../util/ConfigManager';
-import { filterInput, validateInput } from '../util/inputValidations';
-import { QuoteManager } from '../util/QuoteManager';
+import { categoryMenu } from './categoryMenu';
 import { mainMenu } from './mainMenu';
-
-interface IConfirmationHandlerOptions {
-    confirmation: "yes" | "no" | "exit",
-    onAccept: (configs: IConfig) => void,
-    onReject: () => void,
-    msgSucess: string,
-    msgError: string,
-}
+import { changeDateFormatPrompt } from './settingsOptions/changeDateFormatPrompt';
+import { changeDiaryNamePrompt } from './settingsOptions/changeDiaryNamePrompt';
+import { changeNamePrompt } from './settingsOptions/changeNamePrompt';
+import { deleteDiaryPrompt } from './settingsOptions/deleteDiaryPrompt';
+import { resetQuotesPrompt } from './settingsOptions/resetQuotesPrompt';
+import { runDiarySetupPrompt } from './settingsOptions/runDiarySetupPrompt';
 
 export function settingsMenu(headerWarning?: { msg: string, success: boolean }) {
     const configs = ConfigManager.instance().readConfigs().configs!;
 
     const menuOptions = {
-        "change-author": {
-            label: "Change my name",
-            callback: () => changeNamePrompt(configs.author)
-        },
-        "change-diary": {
-            label: "Change diary's name",
-            callback: () => changeDiaryNamePrompt(configs.diaryName)
-        },
-        "set-format": {
-            label: "Change date formatting",
-            callback: () => changeDateFormatPrompt(configs.dateFormat)
-        },
-        "toggle-quotes": {
-            label: `${configs.showQuotes ? "Hide" : "Show"} quotes on main menu`,
-            callback: toggleQuotes
-        },
-        "reset-quotes": {
-            label: "Reset quote list",
-            callback: resetQuotesPrompt
-        },
-        "back": {
-            label: "Back to main menu",
-            callback: mainMenu
-        }
+        "change-author": () => changeNamePrompt(configs.author),
+        "change-diary": () => changeDiaryNamePrompt(configs.diaryName),
+        "set-format": () => changeDateFormatPrompt(configs.dateFormat),
+        "toggle-quotes": toggleQuotes,
+        "categories-settings": categoryMenu,
+        "export-json": () => { throw new Error },
+        "reset-quotes": resetQuotesPrompt,
+        "run-setup": runDiarySetupPrompt,
+        "delete-diary": deleteDiaryPrompt,
+        "back": mainMenu
     }
 
     console.clear();
@@ -59,18 +39,58 @@ export function settingsMenu(headerWarning?: { msg: string, success: boolean }) 
     inquirer.prompt([
         {
             type: "list",
+            pageSize: 20,
             name: "choice",
             message: "Choose:",
             choices: [
-                ...Object.entries(menuOptions).map(([key, value]) => ({
-                    name: value.label,
-                    value: key
-                }))
+                {
+                    name: "Change my name",
+                    value: "change-author"
+                },
+                {
+                    name: "Change diary's name",
+                    value: "change-diary"
+                },
+                {
+                    name: "Change date formatting",
+                    value: "set-format"
+                },
+                {
+                    name: `${configs.showQuotes ? "Hide" : "Show"} quotes on main menu`,
+                    value: "toggle-quotes"
+                },
+                {
+                    name: "Categories settings",
+                    value: "categories-settings"
+                },
+                new inquirer.Separator(" "),
+                {
+                    name: "Export entries to JSON file",
+                    value: "export-json"
+                },
+                new inquirer.Separator(" "),
+                {
+                    name: chalk.red("Reset quote list"),
+                    value: "reset-quotes"
+                },
+                {
+                    name: chalk.red("Reset diary's settings"),
+                    value: "run-setup"
+                },
+                {
+                    name: chalk.red("Delete diary and everything written"),
+                    value: "delete-diary"
+                },
+                new inquirer.Separator(" "),
+                {
+                    name: "Back to main menu",
+                    value: "back"
+                }
             ]
         }
     ])
     .then(({ choice }: { choice: keyof typeof menuOptions }) => {
-        menuOptions[choice].callback();
+        menuOptions[choice]();
     })
 
 }
@@ -79,174 +99,17 @@ function toggleQuotes() {
     try {
         const cm = ConfigManager.instance();
         const configs = cm.configs!;
-        if(typeof configs["showQuotes"] != "boolean") {
-            configs["showQuotes"] = true;
+        if(typeof configs.showQuotes != "boolean") {
+            configs.showQuotes = true;
         } else {
-            configs["showQuotes"] = !configs["showQuotes"];
+            configs.showQuotes = !configs.showQuotes;
         }
         cm.updateConfigs();
         settingsMenu({
-            msg: `Quotes ${configs["showQuotes"] ? "now will be shown in the main menu" : "are now hidden"}`,
+            msg: `Quotes ${configs.showQuotes ? "now will be shown in the main menu" : "are now hidden"}`,
             success: true
         });
     } catch (e) {
         settingsMenu({ msg: "Could not toggle main menu quotes visibility", success: false });
     }
-}
-
-function resetQuotesPrompt() {
-    console.log(chalk.bold(chalk.red("This will delete every quote added by you and replace with the default ones")));
-
-    inquirer.prompt([
-        {
-            type: "list",
-            name: "confirmation",
-            message: "Are you sure?",
-            choices: [
-                {
-                    name: "Yes",
-                    value: "yes"
-                },
-                {
-                    name: "No, cancel",
-                    value: "no"
-                }
-            ]
-        }
-    ])
-    .then(({ confirmation }: IConfirmation) => {
-        if(confirmation == "yes") {
-            try {
-                new QuoteManager().generateFile();
-                settingsMenu({ msg: "Quote list reset successfully", success: true });
-            } catch (e) {
-                settingsMenu({ msg: "Could not reset quote list", success: false });
-            }
-        } else {
-            settingsMenu();
-        }
-    })
-}
-
-function changeDateFormatPrompt(oldDateFormat: string) {
-    const cm = ConfigManager.instance();
-    const configs = cm.configs!;
-
-    inquirer.prompt([
-        {
-            type: "list",
-            name: "choice",
-            message: "Choose a date format:",
-            default: oldDateFormat,
-            choices: Object.values(DateFormatsEnum).map(f => ({
-                name: f,
-                value: f
-            }))
-        }
-    ])
-    .then(({ choice }: { choice: DateFormatsEnum }) => {
-        try {
-            configs["dateFormat"] = choice;
-            cm.updateConfigs();
-            settingsMenu({ msg: "Date format altered successfully", success: true });
-        } catch (e) {
-            settingsMenu({ msg: "Date format altered successfully", success: true });
-        }
-    })
-}
-
-function changeNamePrompt(oldName: string) {
-    const { confirmationHandler, confirmationSelection } = confirmationPrompt("Save?");
-
-    inquirer.prompt([
-        {
-            name: "name",
-            message: "New name:",
-            default: oldName,
-            filter: filterInput,
-            validate: validateInput
-        },
-        confirmationSelection
-    ])
-    .then((answers: { name: string } & IConfirmation) => {
-        const { name, confirmation } = answers;
-        confirmationHandler({
-            confirmation,
-            onAccept: (configs: IConfig) => configs.author = name,
-            onReject: () => changeNamePrompt(name),
-            msgSucess: "Name changed successfully!",
-            msgError: "An error occurred while trying to change your name"
-        })
-    })
-}
-
-
-function changeDiaryNamePrompt(oldDiaryName: string) {
-    const { confirmationHandler, confirmationSelection } = confirmationPrompt("Save?");
-
-    inquirer.prompt([
-        {
-            name: "diaryName",
-            message: "New diary name:",
-            default: oldDiaryName,
-            filter: filterInput,
-            validate: validateInput
-        },
-        confirmationSelection
-    ])
-    .then((answers: { diaryName: string } & IConfirmation) => {
-        const { diaryName, confirmation } = answers;
-        confirmationHandler({
-            confirmation,
-            onAccept: (configs: IConfig) => configs.diaryName = diaryName,
-            onReject: () => changeDiaryNamePrompt(diaryName),
-            msgSucess: "Diary name changed successfully!",
-            msgError: "An error occurred while trying to change the diary name"
-        })
-    })
-}
-
-/**
- * Helper class to padronize and reduce repetitive code 
- * when asking for user confirmation and saving the configs
- */
-function confirmationPrompt(confrimationMessage: string) {
-    const confirmationHandler = (options: IConfirmationHandlerOptions) => {
-        if(options.confirmation == "yes") {
-            const cm = ConfigManager.instance();
-            options.onAccept(cm.configs!);
-            try {
-                cm.updateConfigs();
-                settingsMenu({ msg: options.msgSucess, success: true });
-            } catch (e) {
-                settingsMenu({ msg: options.msgError, success: false });
-            }
-        } else if(options.confirmation == "no") {
-            options.onReject();
-        } else {
-            settingsMenu();
-        }
-    }
-
-    const confirmationSelection = {
-        type: "list",
-        name: "confirmation",
-        message: confrimationMessage,
-        choices: [
-            {
-                name: "Yes, save",
-                value: "yes"
-            },
-            {
-                name: "No, review",
-                value: "no"
-            },
-            {
-                name: "Cancel and exit",
-                value: "cancel"
-            }
-        ]
-    }
-
-    return { confirmationHandler, confirmationSelection };
 }

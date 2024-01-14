@@ -8,8 +8,9 @@ import { filterInput, validateInput } from '../util/inputValidations';
 import { QuoteManager } from '../util/QuoteManager';
 import { mainMenu } from './mainMenu';
 
-export function diarySetup() {
-    console.log(chalk.yellow("No diary configuration file found, running diary setup..."));
+export function diarySetup(firstTimeSetup = true) {
+    if(firstTimeSetup)
+        console.log(chalk.yellow("No diary configuration file found, running diary setup..."));
     console.log(chalk.gray("Let's setup your new CLI Mood Diary!"));
     console.log(chalk.gray("I only need a few optional presentation informations."));
 

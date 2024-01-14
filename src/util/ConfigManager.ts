@@ -11,10 +11,15 @@ import { JsonFS } from './JsonFS';
 export class ConfigManager {
     private static _instance: ConfigManager;
     private _configs: IConfig | null = null;
+    private debug = {
+        timesReaden: 0,
+        timesAccessed: 0
+    };
 
     private constructor() {}
 
     public get configs() {
+        this.debug.timesAccessed++;
         return this._configs;
     }
 
@@ -25,6 +30,7 @@ export class ConfigManager {
     public readConfigs(): this {
         const jsonfs = new JsonFS();
         this._configs = jsonfs.read<IConfig>(configPath)!;
+        this.debug.timesReaden++;
         // fallback if the user deletes it somehow
         if(this._configs.dateFormat == undefined)
             this._configs.dateFormat = "YYYY-MM-DD";
@@ -72,6 +78,10 @@ export class ConfigManager {
             ]
         };
         jsonfs.writeSync(configPath, configs);
+    }
+
+    public logDebugValues(): void {
+        console.log(this.debug);
     }
 
     public static instance(): ConfigManager {
