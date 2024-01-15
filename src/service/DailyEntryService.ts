@@ -34,13 +34,14 @@ export class DailyEntryService implements IRepository {
         return this.repository.listEntries(filter);
     };
 
-    public exportEntries (): boolean {
-        return null as any;
+    public exportEntries (exportPath: string): void {
+        this.repository.exportEntries(exportPath);
     };
 
     public entryExists (dateID: string): boolean {
         return this.repository.entryExists(dateID);
     };
+    
     
     public entriesAverageDetails (): IAverageDetails {
         return this.repository.entriesAverageDetails();

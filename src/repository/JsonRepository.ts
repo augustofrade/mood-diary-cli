@@ -59,8 +59,21 @@ export class JsonRepository implements IRepository {
         return jsonHandler.list(filter);
     };
 
-    public exportEntries (): boolean {
-        return null as any;
+    public exportEntries (exportPath: string): void {
+        const dirname = path.dirname(exportPath);
+        if(!fs.existsSync(dirname))
+            fs.mkdirSync(dirname);
+        
+        const exported: IDailyEntry[] = [];
+        this.listEntries().forEach(({ dateID }) => {
+            if(fs.existsSync(`${jsonPath}/${dateID}.json`)) {
+                const entry = this.readEntry(dateID);
+                if(entry) {
+                    exported.push(entry);
+                }
+            }
+        });
+        this.jsonfs.writeSync(exportPath, exported);
     };
 
     public entryExists (dateID: string): boolean {

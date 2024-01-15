@@ -10,6 +10,7 @@ import { changeNamePrompt } from './settingsOptions/changeNamePrompt';
 import { deleteDiaryPrompt } from './settingsOptions/deleteDiaryPrompt';
 import { resetQuotesPrompt } from './settingsOptions/resetQuotesPrompt';
 import { runDiarySetupPrompt } from './settingsOptions/runDiarySetupPrompt';
+import { exportJsonPrompt } from './settingsOptions/exportJsonPrompt';
 
 export function settingsMenu(headerWarning?: { msg: string, success: boolean }) {
     const configs = ConfigManager.instance().readConfigs().configs!;
@@ -20,7 +21,7 @@ export function settingsMenu(headerWarning?: { msg: string, success: boolean }) 
         "set-format": () => changeDateFormatPrompt(configs.dateFormat),
         "toggle-quotes": toggleQuotes,
         "categories-settings": categoryMenu,
-        "export-json": () => { throw new Error },
+        "export-json": exportJsonPrompt,
         "reset-quotes": resetQuotesPrompt,
         "run-setup": runDiarySetupPrompt,
         "delete-diary": deleteDiaryPrompt,
@@ -65,7 +66,7 @@ export function settingsMenu(headerWarning?: { msg: string, success: boolean }) 
                 },
                 new inquirer.Separator(" "),
                 {
-                    name: "Export entries to JSON file",
+                    name: "Export and backup entries to JSON file",
                     value: "export-json"
                 },
                 new inquirer.Separator(" "),

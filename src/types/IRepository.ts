@@ -10,6 +10,6 @@ export interface IRepository {
     readEntry: (dateID: string) => IDailyEntry | null;
     listEntries: (filter?: IEntryFilter) => Array<IEntryListItem>;
     entryExists: (dateID: string) => boolean;
-    exportEntries: () => boolean;
+    exportEntries: (exportPath: string) => void;
     entriesAverageDetails: () => IAverageDetails;
 }
