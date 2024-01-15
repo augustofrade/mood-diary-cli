@@ -4,6 +4,7 @@ import path from 'path';
 import { MoodEnum } from '../types/enum';
 import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
+import { IEntryFilter } from '../types/IEntryFilter';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IJsonList } from '../types/IJsonList';
 import { basePath } from './directories';
@@ -33,7 +34,8 @@ export class JsonEntryHandler {
         savedEntries[entry.dateID] = {
             title: entry.title,
             mood: MoodEnum[entry.mood] as unknown as number,
-            wordCount: entry.wordCount
+            wordCount: entry.wordCount,
+            categories: entry.categories
         }
         this.jsonfs.writeSync(this.listPath, savedEntries);
     }
@@ -45,19 +47,32 @@ export class JsonEntryHandler {
         this.jsonfs.write(this.listPath, entries);
     }
 
-    public list(): Array<IEntryListItem> {
+    public list(filter?: IEntryFilter): Array<IEntryListItem> {
         this.verifyFile();
         const entries: IJsonList = this.jsonfs.read<IJsonList>(this.listPath)!;
-        const list: Array<IEntryListItem> = Object.entries(entries).map(([key, details]) => {
+        let list: Array<IEntryListItem> = Object.entries(entries).map(([key, details]) => {
             const d = details as unknown as IEntryListItem;
             return {
                 dateID: key,
                 title: d.title,
                 mood: d.mood,
-                wordCount: d.wordCount
+                wordCount: d.wordCount,
+                categories: d.categories
             }
         });
+        if(filter) {
+            list = this.filterList(list, filter);
+        }
         return list;
+    }
+
+    private filterList(list: Array<IEntryListItem>, filter: IEntryFilter): Array<IEntryListItem> {
+        return list.filter(i => {
+            if(filter.category && i.categories && i.categories.includes(filter.category))
+                return true;
+            else
+                return false;
+        })
     }
 
     public entriesAverageDetails(): IAverageDetails {

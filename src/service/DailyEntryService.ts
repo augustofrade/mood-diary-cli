@@ -1,5 +1,6 @@
 import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
+import { IEntryFilter } from '../types/IEntryFilter';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
 
@@ -29,8 +30,8 @@ export class DailyEntryService implements IRepository {
         return this.repository.readEntry(dateID);
     };
 
-    public listEntries (): Array<IEntryListItem> {
-        return this.repository.listEntries();
+    public listEntries (filter?: IEntryFilter): Array<IEntryListItem> {
+        return this.repository.listEntries(filter);
     };
 
     public exportEntries (): boolean {

@@ -1,5 +1,6 @@
 import { IAverageDetails } from './IAverageDetails';
 import { IDailyEntry } from './IDailyEntry';
+import { IEntryFilter } from './IEntryFilter';
 import { IEntryListItem } from './IEntryListItem';
 
 export interface IRepository {
@@ -7,7 +8,7 @@ export interface IRepository {
     editEntry: (entry: IDailyEntry) => boolean;
     deleteEntry: (dateID: string) => boolean;
     readEntry: (dateID: string) => IDailyEntry | null;
-    listEntries: () => Array<IEntryListItem>;
+    listEntries: (filter?: IEntryFilter) => Array<IEntryListItem>;
     entryExists: (dateID: string) => boolean;
     exportEntries: () => boolean;
     entriesAverageDetails: () => IAverageDetails;

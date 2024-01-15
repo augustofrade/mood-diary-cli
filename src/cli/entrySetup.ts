@@ -6,6 +6,7 @@ import { DailyEntryService } from '../service/DailyEntryService';
 import { MoodEnum } from '../types/enum';
 import { IConfirmation } from '../types/IConfirmation';
 import { IDailyEntry } from '../types/IDailyEntry';
+import { CategoryHandler } from '../util/CategoryHandler';
 import { filterInput, validateInput } from '../util/inputValidations';
 import { mainMenu } from './mainMenu';
 
@@ -59,6 +60,7 @@ export function entrySetup(dateID?: string) {
 function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean, previousInput?: Partial<IDailyEntry>) {
     console.clear();
     console.log(chalk.gray(`${isEditing ? "Editing" : "Creating"} entry for ${chalk.green(isToday ? "today" : dateID)}`));
+    const categoriesList = new CategoryHandler().categories;
     if(previousInput == undefined) {
         previousInput = {};
         previousInput.title = dateID;
@@ -66,48 +68,56 @@ function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean,
 
     inquirer
     .prompt([
-       {
-        name: "title",
-        message: "Title:",
-        filter: filterInput,
-        validate: validateInput,
-        default: previousInput.title
-       },
-       {
-        type: "list",
-        name: "mood",
-        message: isToday ? "How are you feeling today?" : "How were you feeling that day?",
-        choices: Object.values(MoodEnum).filter(x => typeof x !== "number"),
-        default: previousInput.mood
-       },
-       {
-        type: "editor",
-        name: "description",
-        message: "Description:",
-        filter: filterInput,
-        default: previousInput.description
-       },
-       {
-        type: "list",
-        name: "confirmation",
-        message: "Save?",
-        choices: [
-            {
-                name:"Yes, save",
-                value: "yes"
-            },
-            {
+        {
+            type: "checkbox",
+            name: "categories",
+            pageSize: 20,
+            message: "Choose categories:",
+            choices: categoriesList,
+            default: previousInput.categories
+        },
+        {
+            name: "title",
+            message: "Title:",
+            filter: filterInput,
+            validate: validateInput,
+            default: previousInput.title
+        },
+        {
+            type: "list",
+            name: "mood",
+            message: isToday ? "How are you feeling today?" : "How were you feeling that day?",
+            choices: Object.values(MoodEnum).filter(x => typeof x !== "number"),
+            default: previousInput.mood
+        },
+        {
+            type: "editor",
+            name: "description",
+            message: "Description:",
+            filter: filterInput,
+            default: previousInput.description
+        },
+        {
+            type: "list",
+            name: "confirmation",
+            message: "Save?",
+            choices: [
+                {
+                    name:"Yes, save",
+                    value: "yes"
+                },
+                {
 
-                name: "No, review",
-                value: "no"
-            },
-            new inquirer.Separator(),
-            {
-                name: "Cancel and exit",
-                value: "cancel"
-            }
-        ]
-       }
+                    name: "No, review",
+                    value: "no"
+                },
+                new inquirer.Separator(),
+                {
+                    name: "Cancel and exit",
+                    value: "cancel"
+                }
+            ]
+        }
     ])
     .then((answers: IDailyEntry & IConfirmation) => {
         if(answers.confirmation == "yes") {

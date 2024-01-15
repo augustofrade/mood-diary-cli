@@ -9,18 +9,28 @@ import { moodColors } from '../util/moodColors';
 import { mainMenu } from './mainMenu';
 import { viewEntry } from './viewEntry';
 import { ConfigManager } from '../util/ConfigManager';
+import { IEntryFilter } from '../types/IEntryFilter';
+import { CategoryHandler } from '../util/CategoryHandler';
+
 
 export function listEntries() {
     showPrompt(true, true, true);
 }
 
-let defaultChoice: string = "toggle-dates";
+let defaultChoice: string = "filter-category";
 
-function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods: boolean) {
+/**
+ * Actual menu
+ */
+function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods: boolean, filter?: IEntryFilter) {
     console.clear();
-    console.log(chalk.gray("Select an entry to read, edit and delete it."));
+    console.log(chalk.gray("Select an entry to read, edit or delete it.\n"));
     const service = DailyEntryService.instance();
-    const entries = service.listEntries();
+    const entries = service.listEntries(filter);
+    let label = "Entries:";
+    if(filter) {
+        label = `Entries that match filter "${Object.entries(filter).map(([k, v]) => k + ": " + v).join(", ")}":`;
+    }
 
     inquirer
     .prompt([
@@ -29,12 +39,16 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
             name: "choice",
             message: "Choose:",
             default: defaultChoice,
-            pageSize: 20,
+            pageSize: 25,
             choices: [
                 new inquirer.Separator("Options:"),
                 {
                     name: "Go back",
                     value: "back"
+                },
+                {
+                    name: "Filter by category",
+                    value: "filter-category"
                 },
                 {
                     name: "Toggle dates",
@@ -49,8 +63,8 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
                     value: "toggle-moods"
                 },
                 new inquirer.Separator(),
-                new inquirer.Separator("Entries:"),
-                ...generateList(entries)
+                new inquirer.Separator(label),
+                ...generateList(entries, filter == undefined)
             ]
         }
     ])
@@ -61,13 +75,16 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
                 mainMenu();
                 break;
             case "toggle-dates":
-                showPrompt(!visibleDates, visibleTitles, visibleMoods);
+                showPrompt(!visibleDates, visibleTitles, visibleMoods, filter);
                 break;
             case "toggle-titles":
-                showPrompt(visibleDates, !visibleTitles, visibleMoods);
+                showPrompt(visibleDates, !visibleTitles, visibleMoods, filter);
                 break;
             case "toggle-moods":
-                showPrompt(visibleDates, visibleTitles, !visibleMoods);
+                showPrompt(visibleDates, visibleTitles, !visibleMoods, filter);
+                break;
+            case "filter-category":
+                filterByCategory(visibleDates, visibleTitles, visibleMoods);
                 break;
             default:
                 viewEntry(answer.choice);
@@ -75,8 +92,14 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
         }
     })
 
-    function generateList(entries: Array<IEntryListItem>) {
-        if(entries.length == 0) {
+    /**
+     * Generates an Inquirer list with choices based on the daily entries
+     * @param entries List of entries to generate the list from
+     * @param isFiltering if the array is a filtered list to hide the helper advice to the user
+     * @returns 
+     */
+    function generateList(entries: Array<IEntryListItem>, isFiltering: boolean) {
+        if(entries.length == 0 && !isFiltering) {
             return [
                 new inquirer.Separator("\nNothing here... :p\nStart by writing a new entry!")
             ];
@@ -102,4 +125,33 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
             });
         }
     }
+}
+
+function filterByCategory(visibleDates: boolean, visibleTitles: boolean, visibleMoods: boolean) {
+    console.clear();
+    console.log(chalk.gray("Select a category name to filter entries\n"));
+    const categories = new CategoryHandler().categories;
+
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "choice",
+            pageSize: 20,
+            message: "Choose:",
+            choices: [
+                ...categories,
+                new inquirer.Separator(" "),
+                {
+                    name: "Go back & reset",
+                    value: "go-back-reset"
+                }
+            ]
+        }
+    ])
+    .then(({ choice }: { choice: string }) => {
+        let chosenFilter: IEntryFilter | undefined;
+        if(choice != "go-back-reset")
+            chosenFilter = { category: choice };
+        showPrompt(visibleDates, visibleTitles, visibleMoods, chosenFilter);
+    })
 }

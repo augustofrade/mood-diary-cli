@@ -8,4 +8,5 @@ export interface IDailyEntry {
     wordCount: number;
     title: string;
     description: string;
+    categories: string[];
 }

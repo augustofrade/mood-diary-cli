@@ -32,6 +32,10 @@ export function viewEntry(dateID: string) {
     printHeaderLine("Word Count", entry.wordCount.toString());
     printHeaderLine("Creation Date", chalk.italic(chalk.gray(creationDate)));
     printHeaderLine("Modification Date", chalk.italic(chalk.gray(modificationDate)));
+    
+    if(typeof entry.categories !== "undefined")
+        printHeaderLine("\nCategories", chalk.gray(entry.categories.join(", ")));
+
     console.log("-".repeat(process.stdout.columns));
     console.log(entry.description);
     console.log("-".repeat(process.stdout.columns));
