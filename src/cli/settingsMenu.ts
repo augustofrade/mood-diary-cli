@@ -11,6 +11,7 @@ import { deleteDiaryPrompt } from './settingsOptions/deleteDiaryPrompt';
 import { resetQuotesPrompt } from './settingsOptions/resetQuotesPrompt';
 import { runDiarySetupPrompt } from './settingsOptions/runDiarySetupPrompt';
 import { exportJsonPrompt } from './settingsOptions/exportJsonPrompt';
+import { importJsonPrompt } from './settingsOptions/importJsonPrompt';
 
 export function settingsMenu(headerWarning?: { msg: string, success: boolean }) {
     const configs = ConfigManager.instance().readConfigs().configs!;
@@ -22,6 +23,7 @@ export function settingsMenu(headerWarning?: { msg: string, success: boolean }) 
         "toggle-quotes": toggleQuotes,
         "categories-settings": categoryMenu,
         "export-json": exportJsonPrompt,
+        "import-json": importJsonPrompt,
         "reset-quotes": resetQuotesPrompt,
         "run-setup": runDiarySetupPrompt,
         "delete-diary": deleteDiaryPrompt,
@@ -64,6 +66,11 @@ export function settingsMenu(headerWarning?: { msg: string, success: boolean }) 
                     name: "Categories settings",
                     value: "categories-settings"
                 },
+                {
+                    name: "Import from backup",
+                    value: "import-json"
+                },
+                
                 new inquirer.Separator(" "),
                 {
                     name: "Export and backup entries to JSON file",

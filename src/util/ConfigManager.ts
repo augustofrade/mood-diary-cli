@@ -8,6 +8,9 @@ import { SetupConfigs } from '../types/SetupConfigs';
 import { basePath, configPath } from './directories';
 import { JsonFS } from './JsonFS';
 
+/**
+ * Singleton class
+ */
 export class ConfigManager {
     private static _instance: ConfigManager;
     private _configs: IConfig | null = null;
@@ -78,6 +81,13 @@ export class ConfigManager {
             ]
         };
         jsonfs.writeSync(configPath, configs);
+    }
+
+    /**
+     * Deletes whole diary directory
+     */
+    public deleteDiary(): void {
+        fs.rmSync(basePath, { recursive: true });
     }
 
     public logDebugValues(): void {

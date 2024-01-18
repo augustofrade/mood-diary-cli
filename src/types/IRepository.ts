@@ -11,5 +11,6 @@ export interface IRepository {
     listEntries: (filter?: IEntryFilter) => Array<IEntryListItem>;
     entryExists: (dateID: string) => boolean;
     exportEntries: (exportPath: string) => void;
+    importEntries: (importPath: string) => void;
     entriesAverageDetails: () => IAverageDetails;
 }

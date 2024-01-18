@@ -9,7 +9,11 @@ import { IRepository } from '../types/IRepository';
 import { jsonPath } from '../util/directories';
 import { JsonEntryHandler } from '../util/JsonEntryHandler';
 import { JsonFS } from '../util/JsonFS';
+import { validateBackupFile } from '../validations/validateBackupFile';
 
+/**
+ * Singleton class
+ */
 export class JsonRepository implements IRepository {
     private static _instance: JsonRepository;
     private jsonfs: JsonFS;
@@ -75,6 +79,14 @@ export class JsonRepository implements IRepository {
         });
         this.jsonfs.writeSync(exportPath, exported);
     };
+
+    public importEntries (importPath: string): void {
+        const backupContent = this.jsonfs.read(importPath);
+        const entries = validateBackupFile(backupContent);
+        if(entries != null) {
+            entries.forEach(e => this.addEntry(e));
+        }
+    }
 
     public entryExists (dateID: string): boolean {
         return fs.existsSync(path.join(jsonPath, `${dateID}.json`));
