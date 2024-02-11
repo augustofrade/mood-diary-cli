@@ -46,9 +46,9 @@ export function newCategoryPrompt() {
         if(confirmation == "yes") {
             try {
                 categoryHandler.addCategory(categoryName);
-                categoryMenu({ msg: `Category "${categoryName}" created successfully!`, success: true });
+                categoryMenu({ text: `Category "${categoryName}" created successfully!`, isError: false });
             } catch (e) {
-                categoryMenu({ msg: "Could not create the category", success: false });
+                categoryMenu({ text: "Could not create the category", isError: true });
             }
         } else {
             categoryMenu();

@@ -4,7 +4,7 @@ A full-featured CLI mood diary aimed to provide a user-friendly interface for jo
 
 You can pick a name for your diary and yourself, be greeted with motivational quotes, keep track of your daily mood and much more!
 
-This was made for learning purposes, using the service/repository pattern with polymorphism.
+This was made for learning purposes, using the service/repository pattern with polymorphism and singleton classes.
 
 ## Features
 

@@ -66,15 +66,14 @@ export function settingsMenu(headerWarning?: { msg: string, success: boolean }) 
                     name: "Categories settings",
                     value: "categories-settings"
                 },
-                {
-                    name: "Import from backup",
-                    value: "import-json"
-                },
-                
                 new inquirer.Separator(" "),
                 {
                     name: "Export and backup entries to JSON file",
                     value: "export-json"
+                },
+                {
+                    name: "Import from backup",
+                    value: "import-json"
                 },
                 new inquirer.Separator(" "),
                 {

@@ -36,15 +36,20 @@ export function exportJsonPrompt() {
     ])
     .then((answers: { exportPath: string } & IConfirmation) => {
         if(answers.confirmation == "yes") {
-            try {
-                const fullpath = path.join(answers.exportPath, "diary_export_" + dayjs().format("YYYYMMDDHHmm") + ".json");
-                DailyEntryService.instance().exportEntries(fullpath);
-                settingsMenu({ msg: "Entries exported and backed up successfully", success: true });
-            } catch (e) {
-                settingsMenu({ msg: "An error occurred while trying to export your entries", success: false });
-            }
-        } else {
+            exportJSON(answers.exportPath);
+        } else {   
             settingsMenu();
         }
     })
+}
+
+function exportJSON(exportPath: string) {
+    try {
+        const fullpath = path.join(exportPath, "diary_export_" + dayjs().format("YYYYMMDDHHmm") + ".json");
+        DailyEntryService.instance().exportEntries(fullpath);
+        settingsMenu({ msg: "Entries exported and backed up successfully", success: true });
+    } catch (e) {
+        settingsMenu({ msg: "An error occurred while trying to export your entries", success: false });
+    }
+
 }

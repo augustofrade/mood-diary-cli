@@ -27,14 +27,18 @@ export function resetQuotesPrompt() {
     ])
     .then(({ confirmation }: IConfirmation) => {
         if(confirmation == "yes") {
-            try {
-                new QuoteManager().generateFile();
-                settingsMenu({ msg: "Quote list reset successfully", success: true });
-            } catch (e) {
-                settingsMenu({ msg: "Could not reset quote list", success: false });
-            }
+            resetQuotes();
         } else {
             settingsMenu();
         }
     })
+}
+
+function resetQuotes() {
+    try {
+        new QuoteManager().generateFile();
+        settingsMenu({ msg: "Quote list reset successfully", success: true });
+    } catch (e) {
+        settingsMenu({ msg: "Could not reset quote list", success: false });
+    }
 }

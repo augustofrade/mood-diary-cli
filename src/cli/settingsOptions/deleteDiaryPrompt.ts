@@ -29,16 +29,20 @@ export function deleteDiaryPrompt() {
     ])
     .then(({ confirmation }: IConfirmation) => {
         if(confirmation == "yes") {
-            try {
-                ConfigManager.instance().deleteDiary();
-                console.clear();
-                console.log(chalk.green("Diary deleted successfully!"));
-                process.exit();
-            } catch (e) {
-                settingsMenu({ msg: "There was an error while trying to delete your diary", success: false });
-            }
+            deleteDiary();
         } else {
             settingsMenu();
         }
     })
+}
+
+function deleteDiary() {
+    try {
+        ConfigManager.instance().deleteDiary();
+        console.clear();
+        console.log(chalk.green("Diary deleted successfully!"));
+        process.exit();
+    } catch (e) {
+        settingsMenu({ msg: "There was an error while trying to delete your diary", success: false });
+    }
 }

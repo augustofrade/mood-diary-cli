@@ -30,7 +30,7 @@ export function listCategoriesPrompt() {
             choices: [ { name: "Go back", value: "back" } ]
         }
     ])
-    .then(answer => {
+    .then(_ => {
         categoryMenu();
     })
 }

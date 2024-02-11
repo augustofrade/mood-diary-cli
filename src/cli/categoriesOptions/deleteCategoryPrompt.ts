@@ -8,7 +8,7 @@ import { categoryMenu } from '../categoryMenu';
 export function deleteCategoryPrompt() {
     const categoryHandler = new CategoryHandler();
     if(categoryHandler.categories.length == 0)
-        return categoryMenu({ msg: "No categories found to be deleted!", success: false });
+        return categoryMenu({ text: "No categories found to be deleted!", isError: true });
 
     console.clear();
     console.log(chalk.gray("List of categories that can be deleted"));
@@ -43,9 +43,9 @@ export function deleteCategoryPrompt() {
         if(confirmation == "yes") {
             try {
                 categoryHandler.deleteCategory(categoryName);
-                categoryMenu({ msg: `Category "${categoryName}" deleted successfully!`, success: true });
+                categoryMenu({ text: `Category "${categoryName}" deleted successfully!`, isError: false });
             } catch (e) {
-                categoryMenu({ msg: "Could not delete the category", success: false });
+                categoryMenu({ text: "Could not delete the category", isError: true });
             }
         } else {
             categoryMenu();

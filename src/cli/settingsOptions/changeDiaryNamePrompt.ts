@@ -33,16 +33,20 @@ export function changeDiaryNamePrompt(oldDiaryName: string) {
     .then((answers: { name: string } & IConfirmation) => {
         const { name, confirmation } = answers;
         if(confirmation == "yes") {
-            const cm = ConfigManager.instance();
-            cm.configs!.diaryName = name;
-            try {
-                cm.updateConfigs();
-                settingsMenu({ msg: "Diary name changed successfully!", success: true });
-            } catch (e) {
-                settingsMenu({ msg: "An error occurred while trying to change the diary's name", success: false });
-            }
+            changeDiaryName(name);
         } else {
             settingsMenu();
         }
     })
+}
+
+function changeDiaryName(name: string) {
+    const cm = ConfigManager.instance();
+    cm.configs!.diaryName = name;
+    try {
+        cm.updateConfigs();
+        settingsMenu({ msg: "Diary name changed successfully!", success: true });
+    } catch (e) {
+        settingsMenu({ msg: "An error occurred while trying to change the diary's name", success: false });
+    }
 }

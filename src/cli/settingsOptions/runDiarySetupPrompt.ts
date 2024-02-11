@@ -1,8 +1,9 @@
-import chalk from "chalk";
-import inquirer from "inquirer";
-import { IConfirmation } from "../../types/IConfirmation";
-import { settingsMenu } from "../settingsMenu";
-import { diarySetup } from "../diarySetup";
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+
+import { IConfirmation } from '../../types/IConfirmation';
+import { diarySetup } from '../diarySetup';
+import { settingsMenu } from '../settingsMenu';
 
 export function runDiarySetupPrompt() {
     console.log(chalk.red("\nThis will run the diary setup dialog and overwrite every settings in your configuration file upon completion, including:"));

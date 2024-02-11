@@ -37,15 +37,19 @@ export function importJsonPrompt() {
         }
     ])
     .then((answers: { importPath: string } & IConfirmation) => {
-        if(answers.confirmation == "yes") {
-            try {
-                DailyEntryService.instance().importEntries(answers.importPath);
-                settingsMenu({ msg: "Entries imported from backup successfully", success: true });
-            } catch (e) {
-                settingsMenu({ msg: "An error occurred while trying to import from the file", success: false });
-            }
+        if(answers.confirmation == "yes") {            
+            importJSON(answers.importPath);
         } else {
             settingsMenu();
         }
     })
+}
+
+function importJSON(importPath: string) {
+    try {
+        DailyEntryService.instance().importEntries(importPath);
+        settingsMenu({ msg: "Entries imported from backup successfully", success: true });
+    } catch (e) {
+        settingsMenu({ msg: "An error occurred while trying to import from the file", success: false });
+    }
 }

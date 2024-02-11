@@ -33,16 +33,20 @@ export function changeNamePrompt(oldName: string) {
     .then((answers: { name: string } & IConfirmation) => {
         const { name, confirmation } = answers;
         if(confirmation == "yes") {
-            const cm = ConfigManager.instance();
-            cm.configs!.author = name;
-            try {
-                cm.updateConfigs();
-                settingsMenu({ msg: "Name changed successfully!", success: true });
-            } catch (e) {
-                settingsMenu({ msg: "An error occurred while trying to change your name", success: false });
-            }
+            changeName(name);
         } else {
-            settingsMenu();
+            return settingsMenu();
         }
     })
+}
+
+function changeName(name: string) {
+    const cm = ConfigManager.instance();
+    cm.configs!.author = name;
+    try {
+        cm.updateConfigs();
+        settingsMenu({ msg: "Name changed successfully!", success: true });
+    } catch (e) {
+        settingsMenu({ msg: "An error occurred while trying to change your name", success: false });
+    }
 }

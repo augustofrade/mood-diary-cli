@@ -1,18 +1,17 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 
+import { IHeaderMessage } from '../types/IHeaderMessage';
+import { handleHeaderMessage } from '../util/handleHeaderMessage';
 import { deleteCategoryPrompt } from './categoriesOptions/deleteCategoryPrompt';
 import { listCategoriesPrompt } from './categoriesOptions/listCategoriesPrompt';
 import { newCategoryPrompt } from './categoriesOptions/newCategoryPrompt';
 import { settingsMenu } from './settingsMenu';
 
-export function categoryMenu(headerWarning?: { msg: string, success: boolean }) {
+export function categoryMenu(headerMessage?: IHeaderMessage) {
     console.clear();
     console.log(chalk.gray("Categories menu"));
-    if(headerWarning) {
-        const color = headerWarning.success ? chalk.green : chalk.yellow;
-        console.log(chalk.bold(color("\n" + headerWarning.msg)));
-    }
+    handleHeaderMessage(headerMessage);
     console.log("-".repeat(process.stdout.columns));
     console.log("\n");
 

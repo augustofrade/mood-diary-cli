@@ -11,12 +11,26 @@ import { filterInput, validateInput } from '../util/inputValidations';
 import { mainMenu } from './mainMenu';
 
 
+interface IEntryMenuParams {
+    dateID: string;
+    isToday: boolean;
+    isEditing: boolean;
+    previousData: Partial<IDailyEntry>
+}
+
+
 export function entrySetup(dateID?: string) {
     const todayDateID = dayjs().format("YYYY-MM-DD");
     if(dateID) {
         const entry = DailyEntryService.instance().readEntry(dateID);
-        if(entry)
-            return entryCreationMenu(dateID, todayDateID == dateID, true, entry);
+        if(entry) {
+            return entryCreationMenu({
+                dateID: dateID,
+                isToday: todayDateID == dateID,
+                isEditing: true,
+                previousData: entry
+            });
+        }
     }
 
     console.log(chalk.yellow("Press enter or leave blank for today's date or\nchoose another one by typing it on yyyy-mm-dd format."));
@@ -31,40 +45,29 @@ export function entrySetup(dateID?: string) {
                 answer = answer.trim();
                 return answer == "" ? todayDateID : answer;
             },
-            validate: (answer) => {
-                if(!dayjs(answer).isValid()) {
-                    console.log(chalk.red("\nType a valid date!"));
-                    return false;
-                } else if(dayjs(answer).isAfter(todayDateID)) {
-                    console.log(chalk.red("\nYou cannot create a entry for a future date!"));
-                    return false;
-                } else { // TODO: refactor - remove this else
-                    const entryExists = DailyEntryService.instance().entryExists(answer);
-                    
-                    if(entryExists) {
-                        console.log(chalk.red("\nAn entry for this date already exists!"));
-                        return false;
-                    }
-                }
-                return true;
-            } 
+            validate: (chosenDate: string) => isDateChosenAvailable(chosenDate, todayDateID)
         }
     ])
     .then((answer: { dateToAdd: string }) => {
         const dateToAdd = dayjs(answer.dateToAdd).format("YYYY-MM-DD");
-        entryCreationMenu(dateToAdd, todayDateID == dateToAdd, false);
+        entryCreationMenu({
+            dateID: dateToAdd,
+            isToday: todayDateID == dateToAdd,
+            isEditing: false,
+            previousData: {
+                title: todayDateID
+            }
+        });
     })
 }
 
 
-function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean, previousInput?: Partial<IDailyEntry>) {
+function entryCreationMenu(params: IEntryMenuParams) {
     console.clear();
+    const { dateID, isToday, isEditing, previousData } = params;
+
     console.log(chalk.gray(`${isEditing ? "Editing" : "Creating"} entry for ${chalk.green(isToday ? "today" : dateID)}`));
     const categoriesList = new CategoryHandler().categories;
-    if(previousInput == undefined) {
-        previousInput = {};
-        previousInput.title = dateID;
-    }
 
     inquirer
     .prompt([
@@ -74,28 +77,28 @@ function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean,
             pageSize: 20,
             message: "Choose categories:",
             choices: categoriesList,
-            default: previousInput.categories
+            default: previousData.categories
         },
         {
             name: "title",
             message: "Title:",
             filter: filterInput,
             validate: validateInput,
-            default: previousInput.title
+            default: previousData.title
         },
         {
             type: "list",
             name: "mood",
             message: isToday ? "How are you feeling today?" : "How were you feeling that day?",
             choices: Object.values(MoodEnum).filter(x => typeof x !== "number"),
-            default: previousInput.mood
+            default: previousData.mood
         },
         {
             type: "editor",
             name: "description",
             message: "Description:",
             filter: filterInput,
-            default: previousInput.description
+            default: previousData.description
         },
         {
             type: "list",
@@ -128,7 +131,12 @@ function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean,
         } else if(answers.confirmation == "cancel") {
             mainMenu();
         } else {
-            entryCreationMenu(dateID, isToday, isEditing, answers);
+            entryCreationMenu({
+                dateID: dateID,
+                isToday: isToday,
+                isEditing: isEditing,
+                previousData: answers
+            });
         }
     });
 }
@@ -138,12 +146,30 @@ function saveEntry(answers: IDailyEntry) {
     console.log(chalk.gray("\nSaving..."));
     const entryService = DailyEntryService.instance();
     const success = entryService.addEntry(answers);
-    if(success) {
-        console.log(chalk.green("Entry saved successfully!"));
-        console.log(chalk.gray("Returning to the main menu..."));
-        setTimeout(mainMenu, 1000);
-
-    } else {
+    if(!success) {
         console.log(chalk.red("Failed to create entry"))
     }
+
+    console.log(chalk.green("Entry saved successfully!"));
+    console.log(chalk.gray("Returning to the main menu..."));
+    setTimeout(mainMenu, 1000);
+}
+
+function isDateChosenAvailable(chosenDate: string, todayDateID: string): boolean {
+    if(!dayjs(chosenDate).isValid()) {
+        console.log(chalk.red("\nType a valid date!"));
+        return false;
+    }
+    if(dayjs(chosenDate).isAfter(todayDateID)) {
+        console.log(chalk.red("\nYou cannot create a entry for a future date!"));
+        return false;
+    }
+    
+    const entryExists = DailyEntryService.instance().entryExists(chosenDate);    
+    if(entryExists) {
+        console.log(chalk.red("\nAn entry for this date already exists!"));
+        return false;
+    }
+    
+    return true;
 }
