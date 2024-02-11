@@ -9,6 +9,7 @@ export class CategoryHandler {
         this._categories = this.cm.configs!.categories;
     }
 
+    // TODO: rename to list
     public get categories(): string[] {
         return this._categories;
     }

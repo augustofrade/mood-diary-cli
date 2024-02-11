@@ -1,17 +1,28 @@
-import fs from "fs";
+import chalk from 'chalk';
+import fs from 'fs';
 
 export class JsonFS {
     public constructor() {}
 
-    public read<T>(filepath: string): T | null {
+    public read<T>(filepath: string, validation?: (object: any) => T | null): T {
         try {
-            // TODO: add jsonschema verification chain
             const file = fs.readFileSync(filepath, "utf8");
-            const object = JSON.parse(file) as T;
+            let object = JSON.parse(file);
+
+            if(!validation) {
+                return object as T;
+            }
+
+            object = validation(object);
+            if(object == null) {
+                throw new Error("ValidationError: file does not match schema requirements");
+            }
+            
             return object;
         } catch(e) {
-            console.log(e);
-            return null;
+            console.log(chalk.red((e as Error).toString()));
+            console.log(chalk.red(`File path: ${filepath}`));
+            process.exit();
         }
     }
 

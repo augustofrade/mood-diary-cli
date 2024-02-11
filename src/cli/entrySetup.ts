@@ -38,7 +38,7 @@ export function entrySetup(dateID?: string) {
                 } else if(dayjs(answer).isAfter(todayDateID)) {
                     console.log(chalk.red("\nYou cannot create a entry for a future date!"));
                     return false;
-                } else {
+                } else { // TODO: refactor - remove this else
                     const entryExists = DailyEntryService.instance().entryExists(answer);
                     
                     if(entryExists) {
@@ -121,6 +121,7 @@ function entryCreationMenu(dateID: string, isToday: boolean, isEditing: boolean,
     ])
     .then((answers: IDailyEntry & IConfirmation) => {
         if(answers.confirmation == "yes") {
+            // TODO: refactor - create IDailyEntryAnswers and remove this .confirmation
             answers.dateID = dateID;
             (answers as any).confirmation = undefined;
             saveEntry(answers);
@@ -144,6 +145,5 @@ function saveEntry(answers: IDailyEntry) {
 
     } else {
         console.log(chalk.red("Failed to create entry"))
-        // TODO: create tmp file -> diary/tmp to save save written content
     }
 }

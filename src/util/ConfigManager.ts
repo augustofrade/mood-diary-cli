@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import fs from 'fs';
 
 import { JsonRepository } from '../repository/JsonRepository';
@@ -5,6 +6,7 @@ import { DateFormatsEnum } from '../types/enum';
 import { IConfig } from '../types/IConfig';
 import { IRepository } from '../types/IRepository';
 import { SetupConfigs } from '../types/SetupConfigs';
+import { validateConfigFile } from '../validations/validateConfigFile';
 import { basePath, configPath } from './directories';
 import { JsonFS } from './JsonFS';
 
@@ -21,22 +23,26 @@ export class ConfigManager {
 
     private constructor() {}
 
+    public updateAccessDate() {
+        this.readConfigs();
+        this._configs!.lastAccess = new Date();
+        this.updateConfigs();
+    }
+
     public get configs() {
         this.debug.timesAccessed++;
         return this._configs;
     }
 
     public hasConfigFile(): boolean {
+        console.log(fs.existsSync(configPath));
         return fs.existsSync(configPath);
     }
 
     public readConfigs(): this {
         const jsonfs = new JsonFS();
-        this._configs = jsonfs.read<IConfig>(configPath)!;
+        this._configs = jsonfs.read<IConfig>(configPath, validateConfigFile);
         this.debug.timesReaden++;
-        // fallback if the user deletes it somehow
-        if(this._configs.dateFormat == undefined)
-            this._configs.dateFormat = "YYYY-MM-DD";
         return this;
     }
 
@@ -88,6 +94,8 @@ export class ConfigManager {
      */
     public deleteDiary(): void {
         fs.rmSync(basePath, { recursive: true });
+        console.log(chalk.yellow("Diary deleted successfully!"));
+        process.exit(0);
     }
 
     public logDebugValues(): void {

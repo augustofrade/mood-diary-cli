@@ -18,6 +18,7 @@ export class DailyEntryService implements IRepository {
      * **SQL**: *{basedir}/diary.db*
      */
     public addEntry (entry: IDailyEntry): boolean {
+        // TODO: change "entry" type to IDailyEntryAnswers and create an object inside this.repository.addEntry call
         entry.wordCount = entry.description.split(" ").length;
         entry.creationDate = new Date();
         entry.modificationDate = entry.creationDate;

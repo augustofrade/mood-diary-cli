@@ -30,7 +30,7 @@ export class JsonEntryHandler {
 
     public set(entry: IDailyEntry): void {
         this.verifyFile();
-        const savedEntries: IJsonList = this.jsonfs.read(this.listPath)!;
+        const savedEntries: IJsonList = this.jsonfs.read<IJsonList>(this.listPath);
         savedEntries[entry.dateID] = {
             title: entry.title,
             mood: MoodEnum[entry.mood] as unknown as number,
@@ -42,14 +42,14 @@ export class JsonEntryHandler {
 
     public remove(dateID: string): void {
         this.verifyFile();
-        const entries: IJsonList = this.jsonfs.read(this.listPath)!;
+        const entries: IJsonList = this.jsonfs.read(this.listPath);
         entries[dateID] = undefined;
         this.jsonfs.write(this.listPath, entries);
     }
 
     public list(filter?: IEntryFilter): Array<IEntryListItem> {
         this.verifyFile();
-        const entries: IJsonList = this.jsonfs.read<IJsonList>(this.listPath)!;
+        const entries: IJsonList = this.jsonfs.read<IJsonList>(this.listPath);
         let list: Array<IEntryListItem> = Object.entries(entries).map(([key, details]) => {
             const d = details as unknown as IEntryListItem;
             return {

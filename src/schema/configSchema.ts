@@ -1,25 +1,40 @@
 export const configSchema = {
-    "id": "/ConfigSchema",
-    "type": "object",
-    "properties": {
-        "creationDate": {
-            "type": "string"
+    id: "/ConfigSchema",
+    type: "object",
+    properties: {
+        diaryName: {
+            type: "string"
         },
-        "diaryName": {
-            "type": "string"
+        author: {
+            type: "string"
         },
-        "author": {
-            "type": "string"
+        storage: {
+            type: "string"
         },
-        "lastAccess": {
-            "type": "string"
+        showQuotes: {
+            type: "boolean"
         },
-        "storage": {
-            "type": "string"
+        dateFormat: {
+            type: "string"
+        },
+        creationDate: {
+            id: "creationDate",
+            type: "string"
+        },
+        lastAccess: {
+            id: "creationDate",
+            type: "string"
+        },
+        categories: {
+            type: "array",
+            items: {
+                type: "string"
+            }
         }
     },
     "required": [
-        "creationDate", "diaryName", "author,",
-        "lastAccess", "storage"
+        "creationDate", "diaryName", "author",
+        "lastAccess", "storage", "categories",
+        "dateFormat", "showQuotes"
     ]
 }
