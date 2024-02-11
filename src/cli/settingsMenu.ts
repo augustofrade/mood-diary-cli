@@ -12,8 +12,10 @@ import { resetQuotesPrompt } from './settingsOptions/resetQuotesPrompt';
 import { runDiarySetupPrompt } from './settingsOptions/runDiarySetupPrompt';
 import { exportJsonPrompt } from './settingsOptions/exportJsonPrompt';
 import { importJsonPrompt } from './settingsOptions/importJsonPrompt';
+import { IHeaderMessage } from '../types/IHeaderMessage';
+import { handleHeaderMessage } from '../util/handleHeaderMessage';
 
-export function settingsMenu(headerWarning?: { msg: string, success: boolean }) {
+export function settingsMenu(headerMessage?: IHeaderMessage) {
     const configs = ConfigManager.instance().readConfigs().configs!;
 
     const menuOptions = {
@@ -32,10 +34,7 @@ export function settingsMenu(headerWarning?: { msg: string, success: boolean }) 
 
     console.clear();
     console.log(chalk.green(`${configs.diaryName}'s settings`));
-    if(headerWarning) {
-        const color = headerWarning.success ? chalk.green : chalk.red;
-        console.log(chalk.bold(color("\n" + headerWarning.msg)));
-    }
+    handleHeaderMessage(headerMessage);
     console.log("-".repeat(process.stdout.columns));
     console.log(chalk.gray(`Hello, ${configs.author}! What would you like to do?\n`));
 
@@ -113,10 +112,10 @@ function toggleQuotes() {
         }
         cm.updateConfigs();
         settingsMenu({
-            msg: `Quotes ${configs.showQuotes ? "now will be shown in the main menu" : "are now hidden"}`,
-            success: true
+            text: `Quotes ${configs.showQuotes ? "now will be shown in the main menu" : "are now hidden"}`,
+            isError: false
         });
     } catch (e) {
-        settingsMenu({ msg: "Could not toggle main menu quotes visibility", success: false });
+        settingsMenu({ text: "Could not toggle main menu quotes visibility", isError: true });
     }
 }

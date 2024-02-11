@@ -45,8 +45,8 @@ function changeName(name: string) {
     cm.configs!.author = name;
     try {
         cm.updateConfigs();
-        settingsMenu({ msg: "Name changed successfully!", success: true });
+        settingsMenu({ text: "Name changed successfully!", isError: false });
     } catch (e) {
-        settingsMenu({ msg: "An error occurred while trying to change your name", success: false });
+        settingsMenu({ text: "An error occurred while trying to change your name", isError: true });
     }
 }

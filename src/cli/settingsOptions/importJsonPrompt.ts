@@ -48,8 +48,8 @@ export function importJsonPrompt() {
 function importJSON(importPath: string) {
     try {
         DailyEntryService.instance().importEntries(importPath);
-        settingsMenu({ msg: "Entries imported from backup successfully", success: true });
+        settingsMenu({ text: "Entries imported from backup successfully", isError: false });
     } catch (e) {
-        settingsMenu({ msg: "An error occurred while trying to import from the file", success: false });
+        settingsMenu({ text: "An error occurred while trying to import from the file", isError: true });
     }
 }

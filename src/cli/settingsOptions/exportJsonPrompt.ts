@@ -47,9 +47,9 @@ function exportJSON(exportPath: string) {
     try {
         const fullpath = path.join(exportPath, "diary_export_" + dayjs().format("YYYYMMDDHHmm") + ".json");
         DailyEntryService.instance().exportEntries(fullpath);
-        settingsMenu({ msg: "Entries exported and backed up successfully", success: true });
+        settingsMenu({ text: "Entries exported and backed up successfully", isError: false });
     } catch (e) {
-        settingsMenu({ msg: "An error occurred while trying to export your entries", success: false });
+        settingsMenu({ text: "An error occurred while trying to export your entries", isError: true });
     }
 
 }

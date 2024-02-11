@@ -37,8 +37,8 @@ export function resetQuotesPrompt() {
 function resetQuotes() {
     try {
         new QuoteManager().generateFile();
-        settingsMenu({ msg: "Quote list reset successfully", success: true });
+        settingsMenu({ text: "Quote list reset successfully", isError: false });
     } catch (e) {
-        settingsMenu({ msg: "Could not reset quote list", success: false });
+        settingsMenu({ text: "Could not reset quote list", isError: true });
     }
 }

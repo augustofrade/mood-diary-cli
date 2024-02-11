@@ -43,6 +43,6 @@ function deleteDiary() {
         console.log(chalk.green("Diary deleted successfully!"));
         process.exit();
     } catch (e) {
-        settingsMenu({ msg: "There was an error while trying to delete your diary", success: false });
+        settingsMenu({ text: "There was an error while trying to delete your diary", isError: true });
     }
 }

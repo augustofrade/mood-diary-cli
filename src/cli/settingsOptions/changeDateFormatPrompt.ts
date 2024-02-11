@@ -28,8 +28,8 @@ function changeDateFormat(format: DateFormatsEnum) {
     try {
         configs["dateFormat"] = format;
         cm.updateConfigs();
-        settingsMenu({ msg: "Date format altered successfully", success: true });
+        settingsMenu({ text: "Date format altered successfully", isError: false });
     } catch (e) {
-        settingsMenu({ msg: "There was an error while trying to change the date's format", success: false });
+        settingsMenu({ text: "There was an error while trying to change the date's format", isError: true });
     }
 }

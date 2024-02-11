@@ -45,8 +45,8 @@ function changeDiaryName(name: string) {
     cm.configs!.diaryName = name;
     try {
         cm.updateConfigs();
-        settingsMenu({ msg: "Diary name changed successfully!", success: true });
+        settingsMenu({ text: "Diary name changed successfully!", isError: false });
     } catch (e) {
-        settingsMenu({ msg: "An error occurred while trying to change the diary's name", success: false });
+        settingsMenu({ text: "An error occurred while trying to change the diary's name", isError: true });
     }
 }
