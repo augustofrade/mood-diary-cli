@@ -30,12 +30,18 @@ export class JsonRepository implements IRepository {
             jsonHandler.set(entry);
             return true;
         } catch (e) {
-            console.log(e);
             return false;
         }
     };
 
-    public editEntry (entry: IDailyEntry): boolean {
+    public editEntry (details: IDailyEntry): boolean {
+        let entry = this.readEntry(details.dateID)!;
+        entry.title = details.title;
+        entry.categories = details.categories;
+        entry.description = details.description;
+        entry.wordCount = details.wordCount;
+        entry.modificationDate = details.modificationDate;
+        entry.mood = details.mood;
         return this.addEntry(entry);
     };
 

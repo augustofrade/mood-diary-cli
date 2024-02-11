@@ -123,14 +123,12 @@ function entryCreationMenu(params: IEntryMenuParams) {
         }
     ])
     .then((answers: IDailyEntry & IConfirmation) => {
-        if(answers.confirmation == "yes") {
-            // TODO: refactor - create IDailyEntryAnswers and remove this .confirmation
-            answers.dateID = dateID;
-            (answers as any).confirmation = undefined;
-            saveEntry(answers);
-        } else if(answers.confirmation == "cancel") {
+        if(isEditing)
+            answers.creationDate = previousData.creationDate!;
+
+        if(answers.confirmation == "cancel") {
             mainMenu();
-        } else {
+        } else if(answers.confirmation == "no") {
             entryCreationMenu({
                 dateID: dateID,
                 isToday: isToday,
@@ -138,16 +136,20 @@ function entryCreationMenu(params: IEntryMenuParams) {
                 previousData: answers
             });
         }
+
+        answers.confirmation = undefined as any;
+        answers.dateID = dateID;
+        saveEntry(answers, isEditing);
     });
 }
 
 
-function saveEntry(answers: IDailyEntry) {
-    console.log(chalk.gray("\nSaving..."));
+function saveEntry(answers: IDailyEntry, isEditing: boolean) {
     const entryService = DailyEntryService.instance();
-    const success = entryService.addEntry(answers);
+    console.log(chalk.gray("\nSaving..."));
+    const success = isEditing ? entryService.editEntry(answers) : entryService.addEntry(answers);
     if(!success) {
-        console.log(chalk.red("Failed to create entry"))
+        console.log(chalk.red("Failed to save entry"))
     }
 
     console.log(chalk.green("Entry saved successfully!"));

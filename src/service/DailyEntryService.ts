@@ -14,23 +14,29 @@ export class DailyEntryService implements IRepository {
 
     /**
      * Creates a new entry under:\
-     * **JSON**: *{basedir}/entries*\
-     * **SQL**: *{basedir}/diary.db*
+     * **JSON**: *{basePath}/entries*\
+     * **SQL**: *{basePath}/diary.db*
      */
     public addEntry (entry: IDailyEntry): boolean {
-        // TODO: change "entry" type to IDailyEntryAnswers and create an object inside this.repository.addEntry call
-        entry.wordCount = entry.description.split(" ").length;
-        entry.creationDate = new Date();
-        entry.modificationDate = entry.creationDate;
-        return this.repository.addEntry(entry);
+        const todayDate = new Date();
+        return this.repository.addEntry({
+            dateID: entry.dateID,
+            title: entry.title,
+            description: entry.description,
+            categories: entry.categories,
+            mood: entry.mood,
+            wordCount: entry.description.split(" ").length,
+            creationDate: todayDate,
+            modificationDate: todayDate
+        });
     };
     
     /**
      * Overwrites an entry by the dateID in the "entry" object
      */
     public editEntry (entry: IDailyEntry): boolean {
+        entry.modificationDate = new Date();
         entry.wordCount = entry.description.split(" ").length;
-        entry.modificationDate = entry.creationDate;
         return this.repository.editEntry(entry);
     };
 
