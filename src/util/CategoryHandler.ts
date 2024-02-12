@@ -25,8 +25,8 @@ export class CategoryHandler {
 
     public deleteCategory(categoryName: string): void {
         const cat = this._categories.map(c => c.toLowerCase());
-        const indexOf = cat.indexOf(categoryName.toLowerCase());
-        this._categories.splice(indexOf, 1);
+        const indexOfCategory = cat.indexOf(categoryName.toLowerCase());
+        this._categories.splice(indexOfCategory, 1);
         // update by ConfigManager.configs.categories reference
         this.cm.updateConfigs();
     }

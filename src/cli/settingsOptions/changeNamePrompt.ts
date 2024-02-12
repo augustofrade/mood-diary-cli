@@ -2,7 +2,7 @@ import inquirer from 'inquirer';
 
 import { IConfirmation } from '../../types/IConfirmation';
 import { ConfigManager } from '../../util/ConfigManager';
-import { filterInput, validateInput } from '../../util/inputValidations';
+import { trimInput, validateEmptyInput } from '../../util/inputValidations';
 import { settingsMenu } from '../settingsMenu';
 
 export function changeNamePrompt(oldName: string) {
@@ -11,8 +11,8 @@ export function changeNamePrompt(oldName: string) {
             name: "name",
             message: "New name:",
             default: oldName,
-            filter: filterInput,
-            validate: validateInput
+            filter: trimInput,
+            validate: validateEmptyInput
         },
         {
             type: "list",

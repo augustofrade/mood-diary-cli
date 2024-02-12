@@ -6,7 +6,7 @@ import path from 'path';
 
 import { DailyEntryService } from '../../service/DailyEntryService';
 import { IConfirmation } from '../../types/IConfirmation';
-import { filterInput, validateInput } from '../../util/inputValidations';
+import { trimInput, validateEmptyInput } from '../../util/inputValidations';
 import { settingsMenu } from '../settingsMenu';
 
 export function exportJsonPrompt() {
@@ -14,8 +14,8 @@ export function exportJsonPrompt() {
         {
             name: "exportPath",
             message: "Directory to export:",
-            filter: filterInput,
-            validate: validateInput,
+            filter: trimInput,
+            validate: validateEmptyInput,
             default: path.join(homedir(), "Downloads")
         },
         {

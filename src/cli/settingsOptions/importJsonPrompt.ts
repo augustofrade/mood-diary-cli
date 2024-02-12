@@ -6,7 +6,7 @@ import path from 'path';
 
 import { DailyEntryService } from '../../service/DailyEntryService';
 import { IConfirmation } from '../../types/IConfirmation';
-import { filterInput } from '../../util/inputValidations';
+import { trimInput } from '../../util/inputValidations';
 import { settingsMenu } from '../settingsMenu';
 
 export function importJsonPrompt() {
@@ -16,7 +16,7 @@ export function importJsonPrompt() {
         {
             name: "importPath",
             message: "Provide the full JSON file path:",
-            filter: filterInput,
+            filter: trimInput,
             validate: validateInputFile,
             default: path.join(os.homedir(), "Downloads")
         },

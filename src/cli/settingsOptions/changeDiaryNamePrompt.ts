@@ -2,7 +2,7 @@ import inquirer from 'inquirer';
 
 import { IConfirmation } from '../../types/IConfirmation';
 import { ConfigManager } from '../../util/ConfigManager';
-import { filterInput, validateInput } from '../../util/inputValidations';
+import { trimInput, validateEmptyInput } from '../../util/inputValidations';
 import { settingsMenu } from '../settingsMenu';
 
 export function changeDiaryNamePrompt(oldDiaryName: string) {
@@ -11,8 +11,8 @@ export function changeDiaryNamePrompt(oldDiaryName: string) {
             name: "name",
             message: "New diary name:",
             default: oldDiaryName,
-            filter: filterInput,
-            validate: validateInput
+            filter: trimInput,
+            validate: validateEmptyInput
         },
         {
             type: "list",

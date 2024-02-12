@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 
 import { IConfirmation } from '../../types/IConfirmation';
 import { CategoryHandler } from '../../util/CategoryHandler';
-import { filterInput } from '../../util/inputValidations';
+import { trimInput } from '../../util/inputValidations';
 import { categoryMenu } from '../categoryMenu';
 
 export function newCategoryPrompt() {
@@ -13,7 +13,7 @@ export function newCategoryPrompt() {
         {
             name: "categoryName",
             message: "New Category name:",
-            filter: filterInput,
+            filter: trimInput,
             validate: (input: string) => {
                 if(input == "") {
                     console.log(chalk.red("\nRequired field!"));

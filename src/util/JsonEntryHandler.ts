@@ -81,28 +81,26 @@ export class JsonEntryHandler {
         let moodSum = 0;
         // amount
         let maxCount = 0;
-        // mood ID
-        let maxMood = 0;
-        // mood map
-        const moodCount: Record<number, number> = {};
+        let maxMoodID = 0;
+        const moodCountMap: Record<number, number> = {};
 
         entries.map(e => {
             wordCount += e.wordCount;
             moodSum += e.mood;
             // count every mood occurrence
-            if(moodCount[e.mood] == undefined)
-                moodCount[e.mood] = 0;
-            moodCount[e.mood]++;
+            if(moodCountMap[e.mood] == undefined)
+                moodCountMap[e.mood] = 0;
+            moodCountMap[e.mood]++;
             // set most frequent mood
-            if(moodCount[e.mood] > maxCount) {
-                maxCount = moodCount[e.mood];
-                maxMood = e.mood;
+            if(moodCountMap[e.mood] > maxCount) {
+                maxCount = moodCountMap[e.mood];
+                maxMoodID = e.mood;
             }
         })
         return {
             mood: {
                 average: moodSum / entries.length,
-                mostCommon: entries.length && moodCount[maxMood] > 1 ? maxMood : null
+                mostCommon: entries.length && moodCountMap[maxMoodID] > 1 ? maxMoodID : null
             },
             wordCount
         }

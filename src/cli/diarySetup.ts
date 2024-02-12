@@ -4,7 +4,7 @@ import inquirer from 'inquirer';
 import { SetupConfigs } from '../types/SetupConfigs';
 import { ConfigManager } from '../util/ConfigManager';
 import { initCLI } from '../util/initCLI';
-import { filterInput, validateInput } from '../util/inputValidations';
+import { trimInput, validateEmptyInput } from '../util/inputValidations';
 import { QuoteManager } from '../util/QuoteManager';
 import { mainMenu } from './mainMenu';
 
@@ -20,15 +20,15 @@ export function diarySetup(firstTimeSetup = true) {
             name: "diaryName",
             message: "Diary Name",
             default: "My Diary",
-            filter: filterInput,
-            validate: validateInput
+            filter: trimInput,
+            validate: validateEmptyInput
         },
         {
             name: "author",
             message: "Your name:",
             default: "User",
-            filter: filterInput,
-            validate: validateInput
+            filter: trimInput,
+            validate: validateEmptyInput
         },
         {
             type: "list",

@@ -7,7 +7,7 @@ import { MoodEnum } from '../types/enum';
 import { IConfirmation } from '../types/IConfirmation';
 import { IDailyEntry } from '../types/IDailyEntry';
 import { CategoryHandler } from '../util/CategoryHandler';
-import { filterInput, validateInput } from '../util/inputValidations';
+import { trimInput, validateEmptyInput } from '../util/inputValidations';
 import { mainMenu } from './mainMenu';
 
 
@@ -82,8 +82,8 @@ function entryCreationMenu(params: IEntryMenuParams) {
         {
             name: "title",
             message: "Title:",
-            filter: filterInput,
-            validate: validateInput,
+            filter: trimInput,
+            validate: validateEmptyInput,
             default: previousData.title
         },
         {
@@ -97,7 +97,7 @@ function entryCreationMenu(params: IEntryMenuParams) {
             type: "editor",
             name: "description",
             message: "Description:",
-            filter: filterInput,
+            filter: trimInput,
             default: previousData.description
         },
         {
