@@ -18,8 +18,8 @@ export function viewEntry(dateID: string) {
         return mainMenu();
 
     const { dateFormat } = ConfigManager.instance().configs!;
-    const moodIndex = MoodEnum[entry.mood] as unknown as number;
-    const moodColor = moodColors[moodIndex];
+    const moodColor = moodColors[entry.mood];
+    const moodLabel = MoodEnum[entry.mood];
     const creationDate = dayjs(entry.creationDate).format(`hh:mm, ${dateFormat}`);
     const modificationDate = dayjs(entry.modificationDate).format(`hh:mm, ${dateFormat}`);
     
@@ -28,7 +28,7 @@ export function viewEntry(dateID: string) {
     console.log(chalk.bold(chalk.gray(dayjs(dateID).format(dateFormat))));
     console.log("-".repeat(process.stdout.columns));
     printHeaderLine("Title", chalk.bold(chalk.green(entry.title)));
-    printHeaderLine("Mood", moodColor(entry.mood));
+    printHeaderLine("Mood", moodColor(moodLabel));
     printHeaderLine("Word Count", entry.wordCount.toString());
     printHeaderLine("Creation Date", chalk.italic(chalk.gray(creationDate)));
     printHeaderLine("Modification Date", chalk.italic(chalk.gray(modificationDate)));

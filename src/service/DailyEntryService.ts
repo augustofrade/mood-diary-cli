@@ -3,6 +3,7 @@ import { IDailyEntry } from '../types/IDailyEntry';
 import { IEntryFilter } from '../types/IEntryFilter';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
+import { MoodEnum } from '../types/enum';
 
 /**
  * Singleton class
@@ -24,7 +25,7 @@ export class DailyEntryService implements IRepository {
             title: entry.title,
             description: entry.description,
             categories: entry.categories,
-            mood: entry.mood, // TODO: change to MoodEnum[entry.mood] to get its number
+            mood: entry.mood,
             wordCount: entry.description.split(" ").length,
             creationDate: todayDate,
             modificationDate: todayDate
@@ -37,7 +38,6 @@ export class DailyEntryService implements IRepository {
     public editEntry (entry: IDailyEntry): boolean {
         entry.modificationDate = new Date();
         entry.wordCount = entry.description.split(" ").length;
-        // TODO: add MoodENum[details.mood]
         return this.repository.editEntry(entry);
     };
 

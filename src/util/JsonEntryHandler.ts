@@ -33,7 +33,7 @@ export class JsonEntryHandler {
         const savedEntries: IJsonList = this.jsonfs.read<IJsonList>(this.listPath);
         savedEntries[entry.dateID] = {
             title: entry.title,
-            mood: MoodEnum[entry.mood] as unknown as number,
+            mood: entry.mood,
             wordCount: entry.wordCount,
             categories: entry.categories
         }

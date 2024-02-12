@@ -55,7 +55,7 @@ export function entrySetup(dateID?: string) {
             isToday: todayDateID == dateToAdd,
             isEditing: false,
             previousData: {
-                title: todayDateID
+                title: dateToAdd
             }
         });
     })
@@ -127,9 +127,9 @@ function entryCreationMenu(params: IEntryMenuParams) {
             answers.creationDate = previousData.creationDate!;
 
         if(answers.confirmation == "cancel") {
-            mainMenu();
+            return mainMenu();
         } else if(answers.confirmation == "no") {
-            entryCreationMenu({
+            return entryCreationMenu({
                 dateID: dateID,
                 isToday: isToday,
                 isEditing: isEditing,
@@ -139,6 +139,8 @@ function entryCreationMenu(params: IEntryMenuParams) {
 
         answers.confirmation = undefined as any;
         answers.dateID = dateID;
+        // string -> number
+        answers.mood = MoodEnum[answers.mood] as unknown as MoodEnum;
         saveEntry(answers, isEditing);
     });
 }
