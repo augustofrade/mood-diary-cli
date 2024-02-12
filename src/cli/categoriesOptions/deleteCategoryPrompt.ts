@@ -18,7 +18,7 @@ export function deleteCategoryPrompt() {
     inquirer.prompt([
         {
             type: "list",
-            pageSize: 10,
+            pageSize: 20,
             name: "categoryName",
             message: "Choose:",
             choices: categoryHandler.categories.map(c => ({ name: c, value: c }))
@@ -40,15 +40,14 @@ export function deleteCategoryPrompt() {
         }
     ])
     .then(({ categoryName, confirmation }: { categoryName: string } & IConfirmation) => {
-        if(confirmation == "yes") {
-            try {
-                categoryHandler.deleteCategory(categoryName);
-                categoryMenu({ text: `Category "${categoryName}" deleted successfully!`, isError: false });
-            } catch (e) {
-                categoryMenu({ text: "Could not delete the category", isError: true });
-            }
-        } else {
-            categoryMenu();
+        if(confirmation != "yes") {
+            return categoryMenu();
+        }
+        try {
+            categoryHandler.deleteCategory(categoryName);
+            categoryMenu({ text: `Category "${categoryName}" deleted successfully!`, isError: false });
+        } catch (e) {
+            categoryMenu({ text: "Could not delete the category", isError: true });
         }
     })
 }

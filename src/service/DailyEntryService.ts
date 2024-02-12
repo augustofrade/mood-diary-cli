@@ -24,7 +24,7 @@ export class DailyEntryService implements IRepository {
             title: entry.title,
             description: entry.description,
             categories: entry.categories,
-            mood: entry.mood,
+            mood: entry.mood, // TODO: change to MoodEnum[entry.mood] to get its number
             wordCount: entry.description.split(" ").length,
             creationDate: todayDate,
             modificationDate: todayDate
@@ -37,6 +37,7 @@ export class DailyEntryService implements IRepository {
     public editEntry (entry: IDailyEntry): boolean {
         entry.modificationDate = new Date();
         entry.wordCount = entry.description.split(" ").length;
+        // TODO: add MoodENum[details.mood]
         return this.repository.editEntry(entry);
     };
 

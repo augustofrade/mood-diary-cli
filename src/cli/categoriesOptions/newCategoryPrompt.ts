@@ -14,17 +14,7 @@ export function newCategoryPrompt() {
             name: "categoryName",
             message: "New Category name:",
             filter: trimInput,
-            validate: (input: string) => {
-                if(input == "") {
-                    console.log(chalk.red("\nRequired field!"));
-                    return false;
-                } else if(categoryHandler.categoryExists(input)) {
-                    console.log(chalk.red("\nThis category already exists!"));
-                    return false;
-                } else {
-                    return true;
-                }
-            }
+            validate: validateCategoryName
         },
         {
             type: "list",
@@ -54,4 +44,18 @@ export function newCategoryPrompt() {
             categoryMenu();
         }
     })
+}
+
+function validateCategoryName(name: string): boolean {
+    const categoryHandler = new CategoryHandler();
+
+    if(name == "") {
+        console.log(chalk.red("\nRequired field!"));
+        return false;
+    }
+    if(categoryHandler.categoryExists(name)) {
+        console.log(chalk.red("\nThis category already exists!"));
+        return false;
+    }
+    return true;
 }

@@ -102,14 +102,10 @@ export function settingsMenu(headerMessage?: IHeaderMessage) {
 }
 
 function toggleQuotes() {
+    const cm = ConfigManager.instance();
+    const configs = cm.configs!;
     try {
-        const cm = ConfigManager.instance();
-        const configs = cm.configs!;
-        if(typeof configs.showQuotes != "boolean") {
-            configs.showQuotes = true;
-        } else {
-            configs.showQuotes = !configs.showQuotes;
-        }
+        configs.showQuotes = !configs.showQuotes;
         cm.updateConfigs();
         settingsMenu({
             text: `Quotes ${configs.showQuotes ? "now will be shown in the main menu" : "are now hidden"}`,

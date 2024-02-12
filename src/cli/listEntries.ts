@@ -13,8 +13,22 @@ import { IEntryFilter } from '../types/IEntryFilter';
 import { CategoryHandler } from '../util/CategoryHandler';
 
 
+interface IPromptOptions {
+    visibleDates: boolean;
+    visibleTitles: boolean;
+    visibleMoods: boolean;
+    filter?: IEntryFilter;
+}
+
+/**
+ * Default entry listing format
+ */
 export function listEntries() {
-    showPrompt(true, true, true);
+    showPrompt({
+        visibleDates: true,
+        visibleTitles: true,
+        visibleMoods: true
+    });
 }
 
 let defaultChoice: string = "filter-category";
@@ -22,7 +36,9 @@ let defaultChoice: string = "filter-category";
 /**
  * Actual menu
  */
-function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods: boolean, filter?: IEntryFilter) {
+function showPrompt(options: IPromptOptions) {
+    const { visibleDates, visibleTitles, visibleMoods, filter } = options;
+
     console.clear();
     console.log(chalk.gray("Select an entry to read, edit or delete it.\n"));
     const service = DailyEntryService.instance();
@@ -75,13 +91,13 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
                 mainMenu();
                 break;
             case "toggle-dates":
-                showPrompt(!visibleDates, visibleTitles, visibleMoods, filter);
+                showPrompt({ visibleDates: !visibleDates, visibleTitles, visibleMoods, filter });
                 break;
             case "toggle-titles":
-                showPrompt(visibleDates, !visibleTitles, visibleMoods, filter);
+                showPrompt({ visibleDates, visibleTitles: !visibleTitles, visibleMoods, filter });
                 break;
             case "toggle-moods":
-                showPrompt(visibleDates, visibleTitles, !visibleMoods, filter);
+                showPrompt({ visibleDates, visibleTitles, visibleMoods: !visibleMoods, filter });
                 break;
             case "filter-category":
                 filterByCategory(visibleDates, visibleTitles, visibleMoods);
@@ -103,9 +119,9 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
             return [
                 new inquirer.Separator("\nNothing here... :p\nStart by writing a new entry!")
             ];
-        } else {
-            const { dateFormat } = ConfigManager.instance().configs!;
-            return entries
+        }
+        const { dateFormat } = ConfigManager.instance().configs!;
+        return entries
             .sort((a, b) => Date.parse(a.dateID) - Date.parse(b.dateID))
             .reverse()
             .map(e => {
@@ -123,7 +139,6 @@ function showPrompt(visibleDates: boolean, visibleTitles: boolean, visibleMoods:
                     value: e.dateID
                 }
             });
-        }
     }
 }
 
@@ -152,6 +167,11 @@ function filterByCategory(visibleDates: boolean, visibleTitles: boolean, visible
         let chosenFilter: IEntryFilter | undefined;
         if(choice != "go-back-reset")
             chosenFilter = { category: choice };
-        showPrompt(visibleDates, visibleTitles, visibleMoods, chosenFilter);
+        showPrompt({
+            visibleDates,
+            visibleTitles,
+            visibleMoods,
+            filter: chosenFilter
+        });
     })
 }

@@ -33,7 +33,7 @@ export function viewEntry(dateID: string) {
     printHeaderLine("Creation Date", chalk.italic(chalk.gray(creationDate)));
     printHeaderLine("Modification Date", chalk.italic(chalk.gray(modificationDate)));
     
-    if(typeof entry.categories !== "undefined")
+    if(typeof entry.categories !== "undefined" && entry.categories.length > 0)
         printHeaderLine("\nCategories", chalk.gray(entry.categories.join(", ")));
 
     console.log("-".repeat(process.stdout.columns));
@@ -100,19 +100,23 @@ function deleteEntryPrompt(dateID: string) {
         }
     ])
     .then(({ confirmation }: IConfirmation) => {
-        if(confirmation == "yes") {
-            console.log(chalk.italic(chalk.yellow("\nDeleting...")));
-            const service = DailyEntryService.instance();
-            const success = service.deleteEntry(dateID);
-            if(success) {
-                console.log(chalk.green("Entry deleted successfuly!"));
-                console.log(chalk.gray("Returning to previous page..."));
-                setTimeout(listEntries, 1000);
-            } else {
-                console.log(chalk.red("Failed to delete entry"));;
-            }
-        } else {
-            viewEntry(dateID);
+        if(confirmation != "yes") {
+            return viewEntry(dateID);
         }
+        deleteEntry(dateID);
     });
+}
+
+function deleteEntry(dateID: string) {
+    console.log(chalk.italic(chalk.yellow("\nDeleting...")));
+    const service = DailyEntryService.instance();
+    const success = service.deleteEntry(dateID);
+    if(success) {
+        console.log(chalk.green("Entry deleted successfuly!"));
+        console.log(chalk.gray("Returning to previous page..."));
+        setTimeout(listEntries, 1000);
+    } else {
+        console.log(chalk.red("Failed to delete entry"));;
+        setTimeout(listEntries, 3000);
+    }
 }

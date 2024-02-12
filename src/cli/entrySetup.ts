@@ -45,7 +45,7 @@ export function entrySetup(dateID?: string) {
                 answer = answer.trim();
                 return answer == "" ? todayDateID : answer;
             },
-            validate: (chosenDate: string) => isDateChosenAvailable(chosenDate, todayDateID)
+            validate: (chosenDate: string) => isChosenDateAvailable(chosenDate, todayDateID)
         }
     ])
     .then((answer: { dateToAdd: string }) => {
@@ -157,7 +157,7 @@ function saveEntry(answers: IDailyEntry, isEditing: boolean) {
     setTimeout(mainMenu, 1000);
 }
 
-function isDateChosenAvailable(chosenDate: string, todayDateID: string): boolean {
+function isChosenDateAvailable(chosenDate: string, todayDateID: string): boolean {
     if(!dayjs(chosenDate).isValid()) {
         console.log(chalk.red("\nType a valid date!"));
         return false;

@@ -9,9 +9,7 @@ export function listCategoriesPrompt() {
 
     if(categoryHandler.categories.length == 0) {
         console.log("No categories found! Create one by choosing the \"New category\" option.");
-        return;
     } else {
-
         console.clear();
         console.log(chalk.gray("Categories list"));
         console.log("-".repeat(process.stdout.columns));
