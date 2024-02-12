@@ -87,11 +87,8 @@ export class JsonRepository implements IRepository {
     };
 
     public importEntries (importPath: string): void {
-        const backupContent = this.jsonfs.read(importPath);
-        const entries = validateBackupFile(backupContent);
-        if(entries != null) {
-            entries.forEach(e => this.addEntry(e));
-        }
+        const entries = this.jsonfs.read(importPath, validateBackupFile);
+        entries.forEach(e => this.addEntry(e));
     }
 
     public entryExists (dateID: string): boolean {

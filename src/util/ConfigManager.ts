@@ -47,9 +47,7 @@ export class ConfigManager {
     }
 
     /**
-     * Configs are obtained by the getter "configs",
-     * since the object returned by it is the same as this._configs
-     * in this function, it just needs to be written in a file.
+     * Updates the configurations value by **object reference** of private property "_configs".
      */
     public updateConfigs(): void {
         const jsonfs = new JsonFS();

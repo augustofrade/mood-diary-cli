@@ -1,7 +1,6 @@
 import { ConfigManager } from "./ConfigManager";
 
 export class CategoryHandler {
-    // TODO: put this class as a property in ConfigManager
     private readonly cm = ConfigManager.instance();
     private _categories: string[] = [];
 
@@ -20,7 +19,7 @@ export class CategoryHandler {
 
     public addCategory(categoryName: string): void {
         this._categories.push(categoryName);
-        // update by reference
+        // update by ConfigManager.configs.categories reference
         this.cm.updateConfigs();
     }
 
@@ -28,7 +27,7 @@ export class CategoryHandler {
         const cat = this._categories.map(c => c.toLowerCase());
         const indexOf = cat.indexOf(categoryName.toLowerCase());
         this._categories.splice(indexOf, 1);
-        // update by reference
+        // update by ConfigManager.configs.categories reference
         this.cm.updateConfigs();
     }
 }
