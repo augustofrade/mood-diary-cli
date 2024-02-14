@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 
-import { MoodEnum } from '../types/enum';
 import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
 import { IEntryFilter } from '../types/IEntryFilter';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IJsonList } from '../types/IJsonList';
+import { validateJsonListFile } from '../validations/validateJsonListFile';
 import { basePath } from './directories';
 import { JsonFS } from './JsonFS';
 
@@ -23,14 +23,19 @@ export class JsonEntryHandler {
     }
 
     private verifyFile() {
-        // TODO: add schema validation
-        if(!fs.existsSync(this.listPath))
+        if(!fs.existsSync(this.listPath)) {
             this.jsonfs.writeSync(this.listPath, {});
+            return;
+        }
+    }
+
+    private getEntries() {
+        return this.jsonfs.read<IJsonList>(this.listPath, validateJsonListFile);
     }
 
     public set(entry: IDailyEntry): void {
         this.verifyFile();
-        const savedEntries: IJsonList = this.jsonfs.read<IJsonList>(this.listPath);
+        const savedEntries: IJsonList = this.getEntries();
         savedEntries[entry.dateID] = {
             title: entry.title,
             mood: entry.mood,
@@ -42,14 +47,14 @@ export class JsonEntryHandler {
 
     public remove(dateID: string): void {
         this.verifyFile();
-        const entries: IJsonList = this.jsonfs.read(this.listPath);
+        const entries: IJsonList = this.getEntries();
         entries[dateID] = undefined;
         this.jsonfs.write(this.listPath, entries);
     }
 
     public list(filter?: IEntryFilter): Array<IEntryListItem> {
         this.verifyFile();
-        const entries: IJsonList = this.jsonfs.read<IJsonList>(this.listPath);
+        const entries: IJsonList = this.getEntries();
         let list: Array<IEntryListItem> = Object.entries(entries).map(([key, details]) => {
             const d = details as unknown as IEntryListItem;
             return {
@@ -105,7 +110,4 @@ export class JsonEntryHandler {
             wordCount
         }
     }
-
-    // TODO: create method to read again each JSON entry
-    // and recreate json_entry_details.json
 }
