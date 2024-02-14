@@ -9,6 +9,7 @@ import { SetupConfigs } from '../types/SetupConfigs';
 import { validateConfigFile } from '../validations/validateConfigFile';
 import { basePath, configPath } from './directories';
 import { JsonFS } from './JsonFS';
+import { SqlRepository } from '../repository/SqlRepository';
 
 /**
  * Singleton class
@@ -35,7 +36,6 @@ export class ConfigManager {
     }
 
     public hasConfigFile(): boolean {
-        console.log(fs.existsSync(configPath));
         return fs.existsSync(configPath);
     }
 
@@ -59,7 +59,7 @@ export class ConfigManager {
         if(repName == "JSON")
             return JsonRepository.instance();
         else if(repName == "SQL")
-            throw { error: "Not implemented" }
+            return SqlRepository.instance();
         else
             return null
     }

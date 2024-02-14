@@ -1,6 +1,7 @@
 import { DailyEntryService } from '../service/DailyEntryService';
 import { IRepository } from '../types/IRepository';
 import { ConfigManager } from './ConfigManager';
+import { createDatabaseTables } from './createDatabaseTables';
 
 /**
  * Inits the CLI loading the diary configurations and the correct storage repository
@@ -13,6 +14,10 @@ export function initCLI() {
         
         if(!repository) {
             return reject();
+        }
+
+        if(cm.configs!.storage == "SQL") {
+            createDatabaseTables();
         }
         
         addRepositories(repository);
