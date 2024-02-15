@@ -7,7 +7,7 @@ export const dailyEntrySchema = {
             items: { type: "string" }
         },
         title: { type: "string" },
-        mood: { type: "string" },
+        mood: { type: "number" },
         description: { type: "string" },
         dateID: { type: "string" },
         wordCount: { type: "number" },

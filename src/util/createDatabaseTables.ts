@@ -1,6 +1,8 @@
-import { db } from "../db";
+import { getDatabase } from "../db";
 
 export function createDatabaseTables() {
+    const db = getDatabase();
+
     db.prepare(`CREATE TABLE IF NOT EXISTS entries (
         dateID              TEXT UNIQUE PRIMARY KEY NOT NULL,
         title               TEXT NOT NULL,

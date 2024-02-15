@@ -1,4 +1,4 @@
-import { db } from '../db';
+import { getDatabase } from '../db';
 import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
 import { IEntryFilter } from '../types/IEntryFilter';
@@ -9,19 +9,23 @@ import path from "path";
 import fs from "fs";
 import { JsonFS } from '../util/JsonFS';
 import { validateBackupFile } from '../validations/validateBackupFile';
+import Database from 'better-sqlite3';
 
 /**
  * Singleton class
  */
 export class SqlRepository implements IRepository {
     private static _instance: SqlRepository;
-    private constructor() {}
+    private readonly db: Database.Database;
+    private constructor() {
+        this.db = getDatabase();
+    }
 
     // TODO: refactor
     public addEntry (entry: IDailyEntry): boolean {
         const creationDate = entry.creationDate.toString();
         const modificationDate = entry.modificationDate.toString();
-        const res1 = db.prepare(`INSERT INTO entries (dateID, title, description,
+        const res1 = this.db.prepare(`INSERT INTO entries (dateID, title, description,
             mood, wordCount, creationDate, modificationDate) VALUES 
             (@dateID, @title, @description,
                 @mood, @wordCount, @creationDate, @modificationDate)`)
@@ -31,12 +35,11 @@ export class SqlRepository implements IRepository {
             return res1.changes == 1;
         }
         
-        const insertCategory = db.prepare(`INSERT INTO entriesCategories 
+        const insertCategory = this.db.prepare(`INSERT INTO entriesCategories 
             (dateID, categoryName) VALUES (@dateID, @categoryName)`);
                 
-        const insertMany = db.transaction((categories) => {
+        const insertMany = this.db.transaction((categories) => {
             for (const category of categories) {
-                console.log(category);
                 insertCategory.run(category);
             }
         })
@@ -44,7 +47,7 @@ export class SqlRepository implements IRepository {
             dateID: entry.dateID, categoryName: c
         }));
 
-        const res2 = insertMany(categoryMap);
+        insertMany(categoryMap);
         
         return res1.changes == 1;
     };
@@ -54,11 +57,13 @@ export class SqlRepository implements IRepository {
     };
 
     public deleteEntry (dateID: string): boolean {
-        return null as any;
+        this.db.prepare("DELETE FROM entriesCategories where dateID = ?").run(dateID);
+        const res = this.db.prepare("DELETE FROM entries WHERE dateID = ?").run(dateID);
+        return res.changes == 1;
     };
 
     public readEntry (dateID: string): IDailyEntry | null {
-        const entries = db.prepare("SELECT * FROM entries e INNER JOIN entriesCategories c ON e.dateID = c.dateID WHERE e.dateID = ?").all(dateID) as Array<IDailyEntry>;
+        const entries = this.db.prepare("SELECT * FROM entries e INNER JOIN entriesCategories c ON e.dateID = c.dateID WHERE e.dateID = ?").all(dateID) as Array<IDailyEntry>;
         if(entries.length == 0)
             return null;
 
@@ -69,22 +74,21 @@ export class SqlRepository implements IRepository {
     };
 
     // TODO: refactor
+    // TODO: redo and remove inner join -> categories with no entries are not being listed
     // TODO: remove IEntryFilter from everything -> pointless
     public listEntries (filter?: IEntryFilter): Array<IEntryListItem> {
         const createQuery = (filter?: IEntryFilter) => {
             const filterArray: string[] = [];
             if(filter?.category)
                 filterArray.push(`c.categoryName = '${filter.category}'`);
-            let query = "SELECT * FROM entries e INNER JOIN entriesCategories c ON e.dateID = c.dateID ";
+            let query = "SELECT * FROM entries e RIGHT JOIN entriesCategories c ON e.dateID = c.dateID ";
             if(filterArray.length > 0) {
-
                 query = query.concat(`WHERE ${filterArray.join(" AND ")}`)
-                console.log(query)
             }
             return query;
         }
 
-        const entries = db.prepare(createQuery(filter)).all() as Array<IDailyEntry>;
+        const entries = this.db.prepare(createQuery(filter)).all() as Array<IDailyEntry>;
         const mappedEntries: Record<string, IEntryListItem> = {};
         for(const entry of entries) {
             if(mappedEntries[entry.dateID] == undefined) {
@@ -107,7 +111,13 @@ export class SqlRepository implements IRepository {
         if(!fs.existsSync(dirname))
             fs.mkdirSync(dirname);
 
-        const entries = this.listEntries();
+        const entriesIDs = this.db.prepare("SELECT dateID FROM entries").all() as Pick<IDailyEntry, "dateID">[];
+        const entries: IDailyEntry[] = [];
+        entriesIDs.map(({ dateID }) => {
+            const entry = this.readEntry(dateID);
+            if(entry)
+                entries.push(entry);
+        });
         const jsonfs = new JsonFS();
         jsonfs.writeSync(exportPath, entries);
     };
@@ -115,11 +125,17 @@ export class SqlRepository implements IRepository {
     public importEntries (importPath: string): void {
         const jsonfs = new JsonFS();
         const entries = jsonfs.read(importPath, validateBackupFile);
-        entries.forEach(e => this.addEntry(e));
+        entries.forEach(e => {
+            if(!this.entryExists(e.dateID))
+                this.addEntry(e);
+            //else
+            //    this.editEntry(e);
+            // TODO: uncomment
+        });
     }
 
     public entryExists (dateID: string): boolean {
-        const result = db.prepare("SELECT dateID from entries WHERE dateID = ?").get(dateID);
+        const result = this.db.prepare("SELECT dateID from entries WHERE dateID = ?").get(dateID);
         return result != undefined;
     };
     
