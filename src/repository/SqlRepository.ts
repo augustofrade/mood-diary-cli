@@ -5,6 +5,10 @@ import { IEntryFilter } from '../types/IEntryFilter';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
 import { ISqlCategory } from '../types/ISqlCategory';
+import path from "path";
+import fs from "fs";
+import { JsonFS } from '../util/JsonFS';
+import { validateBackupFile } from '../validations/validateBackupFile';
 
 /**
  * Singleton class
@@ -99,11 +103,19 @@ export class SqlRepository implements IRepository {
     }
 
     public exportEntries (exportPath: string): void {
-        return null as any;
+        const dirname = path.dirname(exportPath);
+        if(!fs.existsSync(dirname))
+            fs.mkdirSync(dirname);
+
+        const entries = this.listEntries();
+        const jsonfs = new JsonFS();
+        jsonfs.writeSync(exportPath, entries);
     };
 
     public importEntries (importPath: string): void {
-        return null as any;
+        const jsonfs = new JsonFS();
+        const entries = jsonfs.read(importPath, validateBackupFile);
+        entries.forEach(e => this.addEntry(e));
     }
 
     public entryExists (dateID: string): boolean {
