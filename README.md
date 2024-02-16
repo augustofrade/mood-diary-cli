@@ -94,6 +94,8 @@ It is possible to list the available categories, create or delete one by selecti
 
 Quotes are stored on the `headings.txt` file located on the diary's directory and will be randomly shown to the user in the main menu unless it is set to not do so.
 
+To add quotes (or manually remove it) open said file and create a new line and insert the desired text there. **Each line is a different quote**.
+
 It is possible to reset (and recreate) the quotes list files by selecting **Reset quote list** on the Settings menu.
 
 ### Export to JSON
