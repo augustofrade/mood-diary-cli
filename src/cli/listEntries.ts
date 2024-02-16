@@ -44,8 +44,9 @@ function showPrompt(options: IPromptOptions) {
     const entries = service.listEntries(filterCategory);
     let label = "Entries:";
     if(filterCategory) {
-        label = `Entries that are in the ${filterCategory} category`;
+        label = `Entries that are in the ${filterCategory} category:`;
     }
+    label = `[${entries.length}] ${label}`;
 
     inquirer
     .prompt([

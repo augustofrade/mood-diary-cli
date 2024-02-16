@@ -18,32 +18,44 @@ export class DailyEntryService implements IRepository {
      */
     public addEntry (entry: IDailyEntry): boolean {
         const todayDate = new Date();
-        return this.repository.addEntry({
-            dateID: entry.dateID,
-            title: entry.title,
-            description: entry.description,
-            categories: entry.categories,
-            mood: entry.mood,
-            wordCount: entry.description.split(" ").length,
-            creationDate: todayDate,
-            modificationDate: todayDate
-        });
+        try {
+            return this.repository.addEntry({
+                dateID: entry.dateID,
+                title: entry.title,
+                description: entry.description,
+                categories: entry.categories,
+                mood: entry.mood,
+                wordCount: entry.description.split(" ").length,
+                creationDate: todayDate,
+                modificationDate: todayDate
+            });
+        } catch(e) {
+            return false;
+        }
     };
     
     /**
      * Overwrites an entry by the dateID in the "entry" object
      */
     public editEntry (entry: IDailyEntry): boolean {
-        entry.modificationDate = new Date();
-        entry.wordCount = entry.description.split(" ").length;
-        return this.repository.editEntry(entry);
+        try {
+            entry.modificationDate = new Date();
+            entry.wordCount = entry.description.split(" ").length;
+            return this.repository.editEntry(entry);
+        } catch(e) {
+            return false;
+        }
     };
 
     /**
-     * Deletes any entry the date ID
+     * Deletes any entry by the date ID
      */
     public deleteEntry (dateID: string): boolean {
-        return this.repository.deleteEntry(dateID);
+        try {
+            return this.repository.deleteEntry(dateID);
+        } catch (e) {
+            return false;
+        }
     };
 
     /**

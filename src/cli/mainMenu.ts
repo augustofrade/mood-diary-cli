@@ -13,7 +13,10 @@ const choices = {
     "list": listEntries,
     "details": diaryDetails,
     "settings": settingsMenu,
-    "exit": process.exit
+    "exit": () => {
+        console.clear();
+        process.exit();
+    }
 }
     
 

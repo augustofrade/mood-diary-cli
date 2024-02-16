@@ -22,15 +22,11 @@ export class JsonRepository implements IRepository {
     }
 
     public addEntry (entry: IDailyEntry): boolean {
-        try {
-            const entryPath = path.join(jsonPath, `${entry.dateID}.json`);
-            this.jsonfs.writeSync(entryPath, entry);
-            const jsonHandler = new JsonEntryHandler();
-            jsonHandler.set(entry);
-            return true;
-        } catch (e) {
-            return false;
-        }
+        const entryPath = path.join(jsonPath, `${entry.dateID}.json`);
+        this.jsonfs.writeSync(entryPath, entry);
+        const jsonHandler = new JsonEntryHandler();
+        jsonHandler.set(entry);
+        return true;
     };
 
     public editEntry (details: IDailyEntry): boolean {
@@ -45,16 +41,11 @@ export class JsonRepository implements IRepository {
     };
 
     public deleteEntry (dateID: string): boolean {
-        try {
-            const entryPath = path.join(jsonPath, `${dateID}.json`);
-            fs.rmSync(entryPath);
-            const jsonHandler = new JsonEntryHandler();
-            jsonHandler.remove(dateID);
-            return true;
-        } catch (e) {
-            console.log(e);
-            return false;
-        }
+        const entryPath = path.join(jsonPath, `${dateID}.json`);
+        fs.rmSync(entryPath);
+        const jsonHandler = new JsonEntryHandler();
+        jsonHandler.remove(dateID);
+        return true;
     };
 
     public readEntry (dateID: string): IDailyEntry | null {

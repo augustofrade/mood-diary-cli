@@ -1,10 +1,10 @@
-# CLI Mood Diary
+# MooDiary
 
-A full-featured CLI mood diary aimed to provide a user-friendly interface for journaling one's mood and activities through the terminal.
+A full-featured CLI **mood diary** aimed to provide a user-friendly interface for journaling one's mood and activities through the terminal.
 
 You can pick a name for your diary and yourself, be greeted with motivational quotes, keep track of your daily mood and much more!
 
-This was made for learning purposes, using the service/repository pattern with polymorphism, singleton classes and dependency injection.
+This was made for learning purposes, using the service/repository pattern with dynamic polymorphism, singleton classes and dependency injection.
 
 ## Features
 
@@ -25,7 +25,7 @@ This was made for learning purposes, using the service/repository pattern with p
 - [X] Setup config file on first initialization
 - [X] "Factory Reset" options
 - [X] JSON storage Repository
-- [ ] SQL storage Repository
+- [X] SQL storage Repository
 - [ ] Encryption
 
 ## Installation
@@ -46,6 +46,8 @@ npm i -g
 ```
 
 ## Usage
+
+Just run the command `moodiary` in the terminal!
 
 Upon executing the software for the first time, the user will be prompted to set basic info, such as their name, diary's name and which storage method they would like to use (JSON or SQL). Then, after the initial setup they will be prompted with the main menu unless either the diary or its configuration file (config.json) are deleted.
 
