@@ -5,8 +5,6 @@ import { diarySetup } from './cli/diarySetup';
 import { mainMenu } from './cli/mainMenu';
 import { ConfigManager } from './util/ConfigManager';
 import { initCLI } from './util/initCLI';
-import { DailyEntryService } from './service/DailyEntryService';
-import { IDailyEntry } from './types/IDailyEntry';
 
 const cm = ConfigManager.instance();
 
@@ -15,19 +13,7 @@ if(!cm.hasConfigFile()) {
 } else {
     initCLI()
     .then(() => {
-        // mainMenu();
-        const e: IDailyEntry = {
-            dateID: "2024-02-14",
-            title: "teste sql",
-            description: "descricao",
-            mood: 2,
-            wordCount: 1,
-            creationDate: new Date(),
-            modificationDate: new Date(),
-            categories: []
-        }
-        const res = DailyEntryService.instance().addEntry(e);
-        console.log(res);
+        mainMenu();
     })
     .catch((e) => {
         console.log(e)

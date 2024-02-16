@@ -3,7 +3,6 @@ import path from 'path';
 
 import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
-import { IEntryFilter } from '../types/IEntryFilter';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
 import { jsonPath } from '../util/directories';
@@ -64,9 +63,9 @@ export class JsonRepository implements IRepository {
         return entry;
     };
 
-    public listEntries (filter?: IEntryFilter): Array<IEntryListItem> {
+    public listEntries (filterCategory?: string): Array<IEntryListItem> {
         const jsonHandler = new JsonEntryHandler();
-        return jsonHandler.list(filter);
+        return jsonHandler.list(filterCategory);
     };
 
     public exportEntries (exportPath: string): void {

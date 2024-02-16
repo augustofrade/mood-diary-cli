@@ -37,7 +37,8 @@ export function importJsonPrompt() {
         }
     ])
     .then((answers: { importPath: string } & IConfirmation) => {
-        if(answers.confirmation == "yes") {            
+        if(answers.confirmation == "yes") {    
+            console.log(chalk.gray("\nImporting..."));
             importJSON(answers.importPath);
         } else {
             settingsMenu();

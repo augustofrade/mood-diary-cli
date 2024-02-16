@@ -3,7 +3,6 @@ import path from 'path';
 
 import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
-import { IEntryFilter } from '../types/IEntryFilter';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IJsonList } from '../types/IJsonList';
 import { validateJsonListFile } from '../validations/validateJsonListFile';
@@ -52,7 +51,7 @@ export class JsonEntryHandler {
         this.jsonfs.write(this.listPath, entries);
     }
 
-    public list(filter?: IEntryFilter): Array<IEntryListItem> {
+    public list(filterCategory?: string): Array<IEntryListItem> {
         this.verifyFile();
         const entries: IJsonList = this.getEntries();
         let list: Array<IEntryListItem> = Object.entries(entries).map(([key, details]) => {
@@ -65,15 +64,15 @@ export class JsonEntryHandler {
                 categories: d.categories
             }
         });
-        if(filter) {
-            list = this.filterList(list, filter);
+        if(filterCategory) {
+            list = this.filterList(list, filterCategory);
         }
         return list;
     }
 
-    private filterList(list: Array<IEntryListItem>, filter: IEntryFilter): Array<IEntryListItem> {
+    private filterList(list: Array<IEntryListItem>, filterCategory?: string): Array<IEntryListItem> {
         return list.filter(i => {
-            if(filter.category && i.categories && i.categories.includes(filter.category))
+            if(filterCategory && i.categories?.includes(filterCategory))
                 return true;
             else
                 return false;

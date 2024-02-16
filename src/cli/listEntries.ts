@@ -9,7 +9,6 @@ import { moodColors } from '../util/moodColors';
 import { mainMenu } from './mainMenu';
 import { viewEntry } from './viewEntry';
 import { ConfigManager } from '../util/ConfigManager';
-import { IEntryFilter } from '../types/IEntryFilter';
 import { CategoryHandler } from '../util/CategoryHandler';
 
 
@@ -17,7 +16,7 @@ interface IPromptOptions {
     visibleDates: boolean;
     visibleTitles: boolean;
     visibleMoods: boolean;
-    filter?: IEntryFilter;
+    filterCategory?: string;
 }
 
 /**
@@ -37,15 +36,15 @@ let defaultChoice: string = "filter-category";
  * Actual menu
  */
 function showPrompt(options: IPromptOptions) {
-    const { visibleDates, visibleTitles, visibleMoods, filter } = options;
+    const { visibleDates, visibleTitles, visibleMoods, filterCategory } = options;
 
     console.clear();
     console.log(chalk.gray("Select an entry to read, edit or delete it.\n"));
     const service = DailyEntryService.instance();
-    const entries = service.listEntries(filter);
+    const entries = service.listEntries(filterCategory);
     let label = "Entries:";
-    if(filter) {
-        label = `Entries that match filter "${Object.entries(filter).map(([k, v]) => k + ": " + v).join(", ")}":`;
+    if(filterCategory) {
+        label = `Entries that are in the ${filterCategory} category`;
     }
 
     inquirer
@@ -80,7 +79,7 @@ function showPrompt(options: IPromptOptions) {
                 },
                 new inquirer.Separator(),
                 new inquirer.Separator(label),
-                ...generateList(entries, filter == undefined)
+                ...generateList(entries, filterCategory == undefined)
             ]
         }
     ])
@@ -91,13 +90,13 @@ function showPrompt(options: IPromptOptions) {
                 mainMenu();
                 break;
             case "toggle-dates":
-                showPrompt({ visibleDates: !visibleDates, visibleTitles, visibleMoods, filter });
+                showPrompt({ visibleDates: !visibleDates, visibleTitles, visibleMoods, filterCategory });
                 break;
             case "toggle-titles":
-                showPrompt({ visibleDates, visibleTitles: !visibleTitles, visibleMoods, filter });
+                showPrompt({ visibleDates, visibleTitles: !visibleTitles, visibleMoods, filterCategory });
                 break;
             case "toggle-moods":
-                showPrompt({ visibleDates, visibleTitles, visibleMoods: !visibleMoods, filter });
+                showPrompt({ visibleDates, visibleTitles, visibleMoods: !visibleMoods, filterCategory });
                 break;
             case "filter-category":
                 filterByCategory(visibleDates, visibleTitles, visibleMoods);
@@ -164,14 +163,14 @@ function filterByCategory(visibleDates: boolean, visibleTitles: boolean, visible
         }
     ])
     .then(({ choice }: { choice: string }) => {
-        let chosenFilter: IEntryFilter | undefined;
+        let chosenCategory: string | undefined;
         if(choice != "go-back-reset")
-            chosenFilter = { category: choice };
+            chosenCategory = choice;
         showPrompt({
             visibleDates,
             visibleTitles,
             visibleMoods,
-            filter: chosenFilter
+            filterCategory: chosenCategory
         });
     })
 }

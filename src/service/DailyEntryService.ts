@@ -1,9 +1,7 @@
 import { IAverageDetails } from '../types/IAverageDetails';
 import { IDailyEntry } from '../types/IDailyEntry';
-import { IEntryFilter } from '../types/IEntryFilter';
 import { IEntryListItem } from '../types/IEntryListItem';
 import { IRepository } from '../types/IRepository';
-import { MoodEnum } from '../types/enum';
 
 /**
  * Singleton class
@@ -58,8 +56,8 @@ export class DailyEntryService implements IRepository {
     /**
      * List all entries
      */
-    public listEntries (filter?: IEntryFilter): Array<IEntryListItem> {
-        return this.repository.listEntries(filter);
+    public listEntries (category?: string): Array<IEntryListItem> {
+        return this.repository.listEntries(category);
     };
 
     /**

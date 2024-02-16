@@ -5,12 +5,12 @@ import inquirer from 'inquirer';
 import { DailyEntryService } from '../service/DailyEntryService';
 import { MoodEnum } from '../types/enum';
 import { IConfirmation } from '../types/IConfirmation';
+import { ConfigManager } from '../util/ConfigManager';
 import { moodColors } from '../util/moodColors';
 import { printHeaderLine } from '../util/printHeaderLine';
 import { entrySetup } from './entrySetup';
 import { listEntries } from './listEntries';
 import { mainMenu } from './mainMenu';
-import { ConfigManager } from '../util/ConfigManager';
 
 export function viewEntry(dateID: string) {
     const entry = DailyEntryService.instance().readEntry(dateID);
