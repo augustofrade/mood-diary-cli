@@ -20,7 +20,6 @@ export class SqlRepository implements IRepository {
         this.db = getDatabase();
     }
 
-    // TODO: refactor
     public addEntry (entry: IDailyEntry): boolean {
         const creationDate = entry.creationDate.toString();
         const modificationDate = entry.modificationDate.toString();
@@ -131,7 +130,15 @@ export class SqlRepository implements IRepository {
     };
     
     public entriesAverageDetails (): IAverageDetails {
-        return null as any;
+        const details = this.db.prepare("SELECT SUM(wordCount) AS wordCount, AVG(mood) as average FROM entries").get() as any;
+        const moodCount = this.db.prepare("SELECT mood, COUNT(mood) as cnt FROM entries GROUP BY mood ORDER BY cnt DESC").all() as any;
+        return {
+            mood: {
+                average: Math.ceil(details.average),
+                mostCommon: moodCount.length && moodCount[0].mood
+            },
+            wordCount: details.wordCount
+        };
     };
 
     public static instance() {

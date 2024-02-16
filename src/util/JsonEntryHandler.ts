@@ -101,9 +101,10 @@ export class JsonEntryHandler {
                 maxMoodID = e.mood;
             }
         })
+        const averageMood = Math.ceil(moodSum / entries.length);
         return {
             mood: {
-                average: moodSum / entries.length,
+                average: averageMood,
                 mostCommon: entries.length && moodCountMap[maxMoodID] > 1 ? maxMoodID : null
             },
             wordCount
